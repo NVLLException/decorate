@@ -11,6 +11,7 @@ public class OperateTemplate {
             commonCallback.execute();
             baseResponse.setSuccess(true);
         } catch (Exception e) {
+            e.printStackTrace();
             baseResponse.setSuccess(false);
             baseResponse.setErrorCode(bizTypeEnum.getCode());
             baseResponse.setErrorMessage(bizTypeEnum.getName());

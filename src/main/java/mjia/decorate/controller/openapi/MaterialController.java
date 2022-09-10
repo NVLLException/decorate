@@ -4,9 +4,11 @@ import mjia.decorate.controller.CommonCallback;
 import mjia.decorate.controller.DefaultCallback;
 import mjia.decorate.controller.OperateTemplate;
 import mjia.decorate.entity.BaseResponse;
+import mjia.decorate.entity.MaterialVo;
 import mjia.decorate.enums.BizTypeEnum;
 import mjia.decorate.service.MaterialService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,41 +16,41 @@ import org.springframework.web.bind.annotation.RestController;
 import static mjia.decorate.enums.BizTypeEnum.*;
 
 @RestController
-@RequestMapping("/material")
+@RequestMapping("/openApi/material")
 public class MaterialController {
 
     @Autowired
     private MaterialService materialService;
 
-    @RequestMapping("/listMaterialByGroupId")
-    public BaseResponse queryMaterialVoListByGroupId(@RequestParam("groupId") String groupId) {
+    @RequestMapping("/listMaterialByCategoryId")
+    public BaseResponse queryMaterialVoListByCategoryId(@RequestParam("categoryId") String categoryId) {
         BaseResponse response = BaseResponse.builder().build();
         return OperateTemplate.invoke(response, QUERY_MATERIAL, new DefaultCallback() {
             @Override
             public void execute() {
-                response.setData(materialService.listMaterialByGroupId(groupId));
+                response.setData(materialService.listMaterialByCategoryId(categoryId));
             }
         });
     }
 
-    @RequestMapping("/listByCategoryId")
-    public BaseResponse queryGroupVoListByGroupId(@RequestParam("categoryId") String categoryId) {
+    @RequestMapping("/listCategoryByGroupId")
+    public BaseResponse queryCategoryVoListByGroupId(@RequestParam("groupId") String groupId) {
         BaseResponse response = BaseResponse.builder().build();
         return OperateTemplate.invoke(response, QUERY_CATEGORY, new DefaultCallback() {
             @Override
             public void execute() {
-                response.setData(materialService.listMaterialGroupByCatetoryId(categoryId));
+                response.setData(materialService.listMaterialCategoryByGroupId(groupId));
             }
         });
     }
 
-    @RequestMapping("/listCategory")
+    @RequestMapping("/listGroup")
     public BaseResponse listGroup() {
         BaseResponse response = BaseResponse.builder().build();
         return OperateTemplate.invoke(response, QUERY_GROUP, new DefaultCallback() {
             @Override
             public void execute() {
-                response.setData(materialService.listCategory());
+                response.setData(materialService.listGroup());
             }
         });
     }

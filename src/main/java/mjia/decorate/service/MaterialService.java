@@ -7,7 +7,10 @@ import mjia.decorate.entity.MaterialVo;
 import java.util.List;
 
 public interface MaterialService {
-    List<MaterialVo> listMaterialByGroupId(String groupId);
-    List<MaterialGroupVo> listMaterialGroupByCatetoryId(String materialId);
-    List<MaterialCategoryVo> listCategory();
+    List<MaterialVo> listMaterialByCategoryId(String categoryId);
+    List<MaterialCategoryVo> listMaterialCategoryByGroupId(String groupId);
+    List<MaterialGroupVo> listGroup();
+    Integer saveMaterial(MaterialVo materialVo);
+    Integer saveCategory(MaterialCategoryVo categoryVo);
+    Integer saveGroup(MaterialGroupVo groupVo);
 }

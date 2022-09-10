@@ -6,16 +6,15 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-public class MaterialVo {
-    private String Id;
-    private String groupId;
+public class MaterialVo extends BaseVo{
+    private String categoryId;
     private String name;
     private String description;
     private String length;
     private String width;
     private String high;
     private BigDecimal price;
-    private List<String> url;
+    private List<String> urlList;
     private String ext1;
     private String ext2;
     private String ext3;
