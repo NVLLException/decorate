@@ -15,6 +15,7 @@ public class MaterialVo extends BaseVo{
     private String high;
     private BigDecimal price;
     private List<String> urlList;
+    private List<UrlVo> urlVoList;
     private String ext1;
     private String ext2;
     private String ext3;

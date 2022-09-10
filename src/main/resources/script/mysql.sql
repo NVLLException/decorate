@@ -1,3 +1,5 @@
+drop database decorate;
+create database decorate;
 use decorate;
 drop table if exists user;
 drop table if exists material;
@@ -25,6 +27,7 @@ create table material(
     `ext1` varchar(200),
     `ext2` varchar(200),
     `ext3` varchar(200),
+    `status` tinyint(1) default 0,
     `creatorId` int(11),
     `createTime` datetime,
     `updaterId` int(11),
@@ -35,10 +38,11 @@ create table material(
 create table material_category(
     `id` int(11) not null auto_increment,
     `groupId` int(11) not null,
-    `description` varchar(200),
+    `name` varchar(200),
     `ext1` varchar(200),
     `ext2` varchar(200),
     `ext3` varchar(200),
+    `status` tinyint(1) default 0,
     `creatorId` int(11),
     `createTime` datetime,
     `updaterId` int(11),
@@ -48,10 +52,11 @@ create table material_category(
 )engine = InnoDB, character set ='UTF8';
 create table material_group(
     `id` int(11) not null auto_increment,
-    `description` varchar(200),
+    `name` varchar(200),
     `ext1` varchar(200),
     `ext2` varchar(200),
     `ext3` varchar(200),
+    `status` tinyint(1) default 0,
     `creatorId` int(11),
     `createTime` datetime,
     `updaterId` int(11),
@@ -65,6 +70,7 @@ create table material_url(
                              `type` tinyint(2) comment '1:material, 2:category, 3:group',
                              `remoteUrl` varchar(300),
                              `localUrl` varchar(300),
+                             `status` tinyint(1) default 0,
                              `creatorId` int(11),
                              `createTime` datetime,
                              `updaterId` int(11),

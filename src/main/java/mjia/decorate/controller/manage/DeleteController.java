@@ -1,31 +1,72 @@
 package mjia.decorate.controller.manage;
 
+import mjia.decorate.controller.DefaultCallback;
+import mjia.decorate.controller.OperateTemplate;
 import mjia.decorate.entity.BaseResponse;
 import mjia.decorate.entity.MaterialCategoryVo;
 import mjia.decorate.entity.MaterialGroupVo;
 import mjia.decorate.entity.MaterialVo;
+import mjia.decorate.service.MaterialService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import static mjia.decorate.enums.BizTypeEnum.*;
 
 @RestController
 @RequestMapping("/manage/delete")
 public class DeleteController {
+
+    @Autowired
+    private MaterialService materialService;
+
     @RequestMapping("/deleteMaterial")
-    public BaseResponse updateMaterial(@RequestBody MaterialVo materialVo) {
-        //todo;
-        return null;
+    public BaseResponse deleteMaterial(@RequestParam("id") String id) {
+        BaseResponse response = BaseResponse.builder().build();
+        return OperateTemplate.invoke(response, DELETE_MATERIAL, new DefaultCallback() {
+            @Override
+            public void execute() {
+                materialService.deleteMaterial(id);
+                response.setData(true);
+            }
+        });
     }
 
     @RequestMapping("/deleteCategory")
-    public BaseResponse updateCategory(@RequestBody MaterialCategoryVo categoryVo) {
-        //todo
-        return null;
+    public BaseResponse deleteCategory(@RequestParam("id") String id) {
+        BaseResponse response = BaseResponse.builder().build();
+        return OperateTemplate.invoke(response, DELETE_CATEGORY, new DefaultCallback() {
+            @Override
+            public void execute() {
+                materialService.deleteCategory(id);
+                response.setData(true);
+            }
+        });
     }
 
     @RequestMapping("/deleteGroup")
-    public BaseResponse updateGroup(@RequestBody MaterialGroupVo groupVo) {
-        //todo
-        return null;
+    public BaseResponse deleteGroup(@RequestParam("id") String id) {
+        BaseResponse response = BaseResponse.builder().build();
+        return OperateTemplate.invoke(response, DELETE_GROUP, new DefaultCallback() {
+            @Override
+            public void execute() {
+                materialService.deleteGroup(id);
+                response.setData(true);
+            }
+        });
+    }
+
+    @RequestMapping("/deleteUrl")
+    public BaseResponse deleteUrl(@RequestParam("id") String id) {
+        BaseResponse response = BaseResponse.builder().build();
+        return OperateTemplate.invoke(response, DELETE_URL, new DefaultCallback() {
+            @Override
+            public void execute() {
+                materialService.deleteUrl(id);
+                response.setData(true);
+            }
+        });
     }
 }

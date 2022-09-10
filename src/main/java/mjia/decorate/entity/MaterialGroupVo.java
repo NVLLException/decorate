@@ -6,7 +6,7 @@ import java.util.List;
 
 @Data
 public class MaterialGroupVo extends BaseVo{
-    private String description;
+    private String name;
     private List<String> urlList;
     private String ext1;
     private String ext2;

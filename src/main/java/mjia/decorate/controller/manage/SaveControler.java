@@ -36,13 +36,25 @@ public class SaveControler {
 
     @RequestMapping("/saveCategory")
     public BaseResponse saveCategory(@RequestBody MaterialCategoryVo categoryVo) {
-        //todo
-        return null;
+        BaseResponse response = BaseResponse.builder().build();
+        return OperateTemplate.invoke(response, SAVE_CATEGORY, new DefaultCallback() {
+            @Override
+            public void execute() {
+                materialService.saveCategory(categoryVo);
+                response.setData(categoryVo.getId());
+            }
+        });
     }
 
     @RequestMapping("/saveGroup")
     public BaseResponse saveGroup(@RequestBody MaterialGroupVo groupVo) {
-        //todo
-        return null;
+        BaseResponse response = BaseResponse.builder().build();
+        return OperateTemplate.invoke(response, SAVE_GROUP, new DefaultCallback() {
+            @Override
+            public void execute() {
+                materialService.saveGroup(groupVo);
+                response.setData(groupVo.getId());
+            }
+        });
     }
 }
