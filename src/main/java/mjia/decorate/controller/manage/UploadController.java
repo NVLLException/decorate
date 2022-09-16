@@ -19,13 +19,13 @@ import java.io.File;
 @RequestMapping("/manage/upload")
 public class UploadController {
 
-    @Value("${material.file.path}")
+    @Value("${material.file.absolute.path}")
     private String materialFilePath;
 
-    @Value("${category.file.path}")
+    @Value("${category.file.absolute.path}")
     private String categoryFilePath;
 
-    @Value("${group.file.path}")
+    @Value("${group.file.absolute.path}")
     private String groupFilePath;
 
     @Value("${file.name.encrypt.salt}")
@@ -34,30 +34,31 @@ public class UploadController {
     @Autowired
     private MaterialService materialService;
 
-    @RequestMapping("/uploadMaterial")
-    public BaseResponse uploadMaterial(@RequestParam MultipartFile file, @RequestBody BaseRequest<MaterialVo> request) {
-        MaterialVo vo = request.getData();
-        //todo save data
-        return saveFile(file, materialFilePath, vo.getId());
-    }
-
-    @RequestMapping("/uploadCategory")
-    public BaseResponse uploadCategory(@RequestParam MultipartFile file, @RequestBody BaseRequest<MaterialCategoryVo> request) {
-        MaterialCategoryVo vo = request.getData();
-        BaseResponse baseResponse = saveFile(file, categoryFilePath, vo.getId(), URLTypeEnum.CATEGORY);
+    @RequestMapping("/uploadUrl")
+    public BaseResponse uploadMaterial(@RequestParam MultipartFile file, @RequestParam("type") String type, @RequestParam("id") String id, @RequestParam("name") String name) {
+        String filePath = "";
+        if (URLTypeEnum.MATERIAL.equals(URLTypeEnum.getByCode(type))) {
+            filePath = materialFilePath;
+        } else if (URLTypeEnum.CATEGORY.equals(URLTypeEnum.getByCode(type))) {
+            filePath = categoryFilePath;
+        } else if (URLTypeEnum.GROUP.equals(URLTypeEnum.getByCode(type))) {
+            filePath = groupFilePath;
+        }
+        BaseResponse baseResponse = saveFile(file, filePath, id, URLTypeEnum.getByCode(type));
         if(!baseResponse.getSuccess()) {
             return baseResponse;
         }
         UrlVo urlVo = (UrlVo) baseResponse.getData();
+        //填充Id
+        urlVo.setReferId(id);
         materialService.saveUrl(urlVo);
+        if (URLTypeEnum.CATEGORY.equals(URLTypeEnum.getByCode(type))) {
+            MaterialCategoryVo categoryVo = new MaterialCategoryVo();
+            categoryVo.setId(id);
+            categoryVo.setName(name);
+            materialService.saveCategory(categoryVo);
+        }
         return baseResponse;
-    }
-
-    @RequestMapping("/uploadGroup")
-    public BaseResponse uploadGroup(@RequestParam MultipartFile file, @RequestBody BaseRequest<MaterialGroupVo> request) {
-        MaterialGroupVo vo = request.getData();
-        //todo save data
-        return null; //saveFile(file, groupFilePath, vo.getId());
     }
 
     private BaseResponse saveFile(MultipartFile file, String filePath, String id, URLTypeEnum type) {
@@ -75,12 +76,12 @@ public class UploadController {
             if (!path.exists()) {
                 path.mkdir();
             }
-            String fileName = getFileName(id, type, file.getName().split("\\.")[1]);
+            String fileName = getFileName(id, type, file.getOriginalFilename());
             file.transferTo(new File(filePath, fileName));
             urlVo.setFileName(fileName);
             urlVo.setReferId(id);
             urlVo.setType(type.getCode());
-            urlVo.setLocalUrl("");//todo
+
             //todo upload to cloud and set remote url
             return BaseResponse.builder().success(true).data(urlVo).build();
         } catch (Exception e) {
@@ -93,7 +94,7 @@ public class UploadController {
         }
     }
 
-    private String getFileName(String id, URLTypeEnum type, String suffix) {
-        return DigestUtils.md5Hex(fileNameSalt + type.getCode() + id) + "." + suffix.split("\\.")[1];
+    private String getFileName(String id, URLTypeEnum type, String fileName) {
+        return DigestUtils.md5Hex(fileNameSalt + type.getCode() + id) + "." + fileName.split("\\.")[1];
     }
 }

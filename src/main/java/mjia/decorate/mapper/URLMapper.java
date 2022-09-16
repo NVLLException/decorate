@@ -8,7 +8,7 @@ import java.util.List;
 @Mapper
 public interface URLMapper {
     @Select("select * from material_url where referId in(${referIds}) and type=#{type} and status=0")
-    List<UrlVo> queryListByReferIdAndType(String referIds, String type);
+    List<UrlVo> queryListByReferIdAndType(@Param("referIds") String referIds, @Param("type") String type);
 
     @Insert("insert into material_url(fileName,referId,type,remoteUrl,localUrl,creatorId,createTime,updaterId,updateTime) values" +
             "(#{fileName},#{referId},#{type},#{remoteUrl},#{localUrl},#{creatorId},now(),#{updaterId},now())")
@@ -16,8 +16,8 @@ public interface URLMapper {
     Integer insertUrl(UrlVo urlVo);
 
     @Update("update material_url set status=-1 where referId in(${referIds}) and type=#{type}")
-    Integer deleteUrl(String referIds, String type);
+    Integer deleteUrl(@Param("referIds") String referIds, @Param("type") String type);
 
     @Update("update material_url set status=-1 where id=#{id}")
-    Integer deleteUrlById(String id);
+    Integer deleteUrlById(@Param("id") String id);
 }

@@ -132,6 +132,7 @@ public class MaterialServiceImpl implements MaterialService{
                         categoryVo.setUrlVoList(new ArrayList());
                     }
                     categoryVo.getUrlVoList().add(urlVo);
+                    categoryVo.setFileName(urlVo.getFileName());
                 }
             });
         });
@@ -192,7 +193,9 @@ public class MaterialServiceImpl implements MaterialService{
         //先删除material
         //1.查询materialIdList
         List<String> materialIds = materialMapper.queryMaterialIdsByCategoryId(categoryId);
-        deleteMaterial(StringUtils.join(materialIds, ","));
+        if (CollectionUtils.isNotEmpty(materialIds)) {
+            deleteMaterial(StringUtils.join(materialIds, ","));
+        }
 
         //删除category
         urlMapper.deleteUrl(categoryId, URLTypeEnum.CATEGORY.getCode());
@@ -205,7 +208,9 @@ public class MaterialServiceImpl implements MaterialService{
         //先删除category
         //1.查询categoryIdList
         List<String> categoryIds = materialMapper.queryCategoryIdsByGroupId(groupId);
-        deleteCategory(StringUtils.join(categoryIds, ","));
+        if (CollectionUtils.isNotEmpty(categoryIds)) {
+            deleteCategory(StringUtils.join(categoryIds, ","));
+        }
 
         //删除group
         urlMapper.deleteUrl(groupId, URLTypeEnum.GROUP.getCode());

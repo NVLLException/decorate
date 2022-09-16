@@ -10,6 +10,7 @@ public class MaterialCategoryVo extends BaseVo{
     private String name;
     private List<String> urlList;
     private List<UrlVo> urlVoList;
+    private String fileName;
     private String ext1;
     private String ext2;
     private String ext3;

@@ -1,0 +1,221 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="md5.js"></script>
+    <script type="text/javascript" src="env-var.js"></script>
+    <script type="text/javascript" src="common-util.js"></script>
+    <script type="text/javascript" src="template-web.js"></script>
+    <link type="text/css" rel="stylesheet" href="default/easyui.css"/>
+    <link type="text/css" rel="stylesheet" href="icon.css"/>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+</head>
+<body>
+<h2>装修材料管理后台</h2>
+<div><a href="/page/material-group.html">分组管理</a>/分类管理</div>
+<div>
+    <div id="groupParent"></div>
+</div>
+
+</body>
+<script id="groupList" type="text/html">
+    {{each list as value}}
+    <div class="easyui-layout" style="width:1000px;min-height:600px;margin: auto">
+        <div data-options="region:'north'" style="height:50px;">
+            <div class="easyui-panel" style="padding:5px;">
+                <a href="#" class="easyui-menubutton" date-options="plain:true" onclick="addCategory({{value.id}})"><span class="fa fa-plus"></span>增加材料</a>
+                <span style="margin-left: 20px;font-size: 20px"><b>{{value.name}}</b></span>
+            </div>
+        </div>
+        <div data-options="region:'center'" id="categoryParent_{{value.id}}">
+        </div>
+    </div>
+    <div style="margin: 10px"></div>
+    {{/each}}
+</script>
+<script id="categoryList" type="text/html">
+
+    {{each list}}
+    {{if $index+1<5 || ($index+1)%4!=0}}
+    <div style="display: -webkit-inline-flex;margin: 10px 20px 10px 20px">
+        <div style="display: block">
+            <div id="view_{{$value.id}}" onClick="editMaterial({{$value.id}})" data-options="" class="easyui-panel" title="{{$value.name}}" style="width:130px;height:130px;padding:10px;">
+                <div>
+                    <div><img style="width: 75px;height: 75px" src="/img/{{$value.fileName}}"/></div>
+                </div>
+            </div>
+            <div id="edit_{{$value.id}}" class="edit_category" >
+                <div class="easyui-panel" title="Upload File" style="width:400px;padding:30px 70px 50px 70px">
+                    <div style="margin-bottom:20px">
+                        <div>分类名字:</div>
+                        <input id="category_edit_input_{{$value.id}}" value="{{$value.name}}" class="easyui-textbox" style="width:100%">
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <div>图片:</div>
+                        <input class="easyui-filebox" id="category_edit_file_{{$value.id}}" data-options="prompt:'选择上传...'" style="width:100%">
+                    </div>
+                </div>
+            </div>
+            <div style="display: block">
+                <a href="#" id="category_edit_btn_{{$value.id}}" class="easyui-linkbutton" data-options="iconCls:'icon-add'" onClick="editCategory({{$value}})" style="width:70px">编辑</a>
+                <a href="#" id="category_save_btn_{{$value.id}}" class="easyui-linkbutton" style="display: none" data-options="iconCls:'icon-save'" onClick="saveCategory({{$value}})">保存</a>
+                <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-cut'" onClick="deleteCategory({{$value}})" style="width:70px">删除</a>
+                <a href="#" id="category_cancel_btn_{{$value.id}}" class="easyui-linkbutton" style="display: none" onClick="cancelCategory({{$value}})">取消编辑</a>
+            </div>
+        </div>
+    </div>
+    {{else if $index%4 ==0}}
+    <div style="display: block">
+    </div>
+    {{/if}}
+    {{/each}}
+
+</script>
+<script type="text/javascript">
+    $(function(){
+        doGetMaterialList();
+        $('#editCategoryDialog').dialog('close')
+    })
+    function addCategory(groupId) {
+        let data = {
+            name: "请输入分类名",
+            groupId: groupId
+        }
+        doRequest("/manage/save/saveCategory",data,(result) => {
+            goGetCategory(groupId);
+            default_success_notify("添加分类成功");
+        })
+    }
+    function doGetMaterialList() {
+        let categoryId = getCategoryId();
+        doRequest("/manage/list/listMaterial?categoryId=" + categoryId,{},(result) => {
+            let groupList = result.data;
+            if (groupList != null) {
+                rendPage(groupList);
+            }
+        })
+    }
+
+    function goGetCategory(groupId) {
+        doRequest("/manage/list/listCategory?groupId=" + groupId,{},(result) => {
+            let categoryList = result.data;
+            if (categoryList != null) {
+                rendCategoryPage(categoryList, groupId);
+            }
+        })
+    }
+    function saveGroup(id) {
+        let name = $("#group_name_" + id).val();
+        let data = {
+            id: id,
+            name: name
+        }
+        doRequest("/manage/save/saveGroup",data,(result) => {
+            default_success_notify();
+            doGetGroupList();
+        })
+    }
+    function deleteGroup(group) {
+        $.messager.confirm('删除分组', '确定删除分组 <span style="color:red">' + group.name + '</span> ? 删除后无法恢复', function(r){
+            if (r){
+                doRequest("/manage/delete/deleteGroup?id=" + group.id,{},(result) => {
+                    default_success_notify("删除分组成功!")
+                    doGetGroupList();
+                })
+            }
+        });
+    }
+
+    function deleteCategory(category) {
+        $.messager.confirm('删除分类', '确定删除分类 <span style="color:red">' + category.name + '</span> ? 删除后无法恢复', function(r){
+            if (r){
+                doRequest("/manage/delete/deleteCategory?id=" + category.id,{},(result) => {
+                    default_success_notify("删除分类成功!")
+                    doGetGroupList();
+                })
+            }
+        });
+    }
+
+    function editCategory(category) {
+        $('#edit_' + category.id).show()
+        $("#category_edit_btn_" + category.id).hide()
+
+        $('#view_' + category.id).hide()
+        $("#category_save_btn_" + category.id).show()
+        $("#category_cancel_btn_" + category.id).show()
+    }
+
+    function cancelCategory(category) {
+        $('#edit_' + category.id).hide()
+        $("#category_edit_btn_" + category.id).show()
+
+        $('#view_' + category.id).show()
+        $("#category_save_btn_" + category.id).hide()
+        $("#category_cancel_btn_" + category.id).hide()
+    }
+
+    function saveCategory(category) {
+        let name = $('#category_edit_input_' + category.id).val();
+        let file = $('#edit_' + category.id).find('input[type=file]')[0].files[0];
+        let data = new FormData();
+        data.append('file', file);
+        uploadFile('/manage/upload/uploadUrl?id='+ category.id + '&type=2&name=' + name, data, (result) => {
+            $('#edit_' + category.id).hide()
+            $("#category_edit_btn_" + category.id).show()
+
+            $('#view_' + category.id).show()
+            $("#category_save_btn_" + category.id).hide()
+            $("#category_cancel_btn_" + category.id).hide()
+            goGetCategory(category.groupId);
+        });
+    }
+
+    //渲染页面
+    function rendPage(groupList) {
+        let data = {
+            list: groupList
+        };
+        let html = template('groupList', data);
+        document.getElementById('groupParent').innerHTML = html;
+        $.parser.parse($('#groupParent'));
+    }
+
+    function rendCategoryPage(categoryList, groupId) {
+        let data = {
+            list: categoryList
+        };
+        let html = template('categoryList', data);
+        let id = 'categoryParent_'+groupId;
+        document.getElementById(id).innerHTML = html;
+        $.parser.parse($('#categoryParent_' + groupId));
+        $(".edit_category").hide()
+    }
+
+    function getCategoryId() {
+        return getParamValue('categoryId');
+    }
+
+    function getParamValue(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) return unescape(r[2]); return null;
+    }
+</script>
+<style>
+    #addGroupBtn,.saveGroupBtn,.addCategoryBtn,.fa-plus{
+        color: #3c8b3c;
+    }
+    .deleteGroup{
+        color: #c62828;
+    }
+    #addGroupBtn:hover{
+        color: #0E2D45;
+        cursor: pointer;
+    }
+    .m-btn-downarrow{
+        display: none;
+    }
+</style>
+</html>

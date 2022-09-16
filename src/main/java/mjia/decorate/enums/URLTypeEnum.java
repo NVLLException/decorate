@@ -22,4 +22,13 @@ public enum URLTypeEnum {
     public String getName() {
         return desc;
     }
+
+    public static URLTypeEnum getByCode(String code) {
+        for(URLTypeEnum type : URLTypeEnum.values()) {
+            if (type.getCode().equals(code)) {
+                return type;
+            }
+        }
+        return null;
+    }
 }

@@ -1,0 +1,67 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="md5.js"></script>
+    <script type="text/javascript" src="env-var.js"></script>
+    <script type="text/javascript" src="common-util.js"></script>
+    <link type="text/css" rel="stylesheet" href="default/easyui.css"/>
+    <link type="text/css" rel="stylesheet" href="icon.css"/>
+</head>
+<body style="width: 500px; margin: auto;">
+    <h2 style="margin-top: 100px">装修材料管理后台</h2>
+    <p>请登录</p>
+    <div style="margin:20px 0;"></div>
+    <div class="easyui-panel" style="width:400px;padding:50px 60px">
+        <div style="margin-bottom:20px">
+            <input id="user" class="easyui-textbox" prompt="Username" iconWidth="28" style="width:100%;height:34px;padding:10px;">
+        </div>
+        <div style="margin-bottom:20px">
+            <input id="pass" class="easyui-passwordbox" prompt="Password" iconWidth="28" style="width:100%;height:34px;padding:10px">
+        </div>
+        <div style="text-align:center;margin-left: 220px;">
+            <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()">登录</a>
+        </div>
+    </div>
+    <div id="viewer"></div>
+</body>
+<script type="text/javascript">
+    $('#pass').passwordbox({
+        inputEvents: $.extend({}, $.fn.passwordbox.defaults.inputEvents, {
+            keypress: function(e){
+                var char = String.fromCharCode(e.which);
+                $('#viewer').html(char).fadeIn(200, function(){
+                    $(this).fadeOut();
+                });
+            }
+        })
+    })
+    function submitForm() {
+        let name = $('#user').val();
+        let password = $('#pass').val();
+        let reqData = {
+            name: name.toString(),
+            password: hex_md5(password.toString())
+        }
+        doRequest("/manage/login/loginUser", reqData, (result) => {
+            if (result.data) {
+                window.location.href='/page/material-group.html';
+            } else {
+                notify_msg("登录失败", "请检查用户名和密码");
+            }
+        }, (result) => {
+            notify_msg("登录失败", "请检查用户名和密码");
+        })
+    }
+</script>
+<style>
+    #viewer{
+        position: relative;
+        padding: 0 60px;
+        top: -70px;
+        font-size: 54px;
+        line-height: 60px;
+    }
+</style>
+</html>

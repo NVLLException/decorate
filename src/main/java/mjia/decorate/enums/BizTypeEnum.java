@@ -20,6 +20,8 @@ public enum BizTypeEnum {
 
     FILE_EMPTY("10000", "上传图片为空"),
     SAVE_FILE("10001", "保存图片"),
+
+    LOGIN_USER("11000", "管理员登录"),
     ;
 
     private String code;

@@ -6,6 +6,7 @@ import mjia.decorate.entity.BaseResponse;
 import mjia.decorate.service.MaterialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import static mjia.decorate.enums.BizTypeEnum.*;
@@ -29,7 +30,7 @@ public class MaterialListController {
     }
 
     @RequestMapping("/listCategory")
-    public BaseResponse listCategory(String groupId) {
+    public BaseResponse listCategory(@RequestParam("groupId") String groupId) {
         BaseResponse response = BaseResponse.builder().build();
         return OperateTemplate.invoke(response, BACK_QUERY_CATEGORY, new DefaultCallback() {
             @Override
@@ -40,7 +41,7 @@ public class MaterialListController {
     }
 
     @RequestMapping("/listMaterial")
-    public BaseResponse listMaterial(String categoryId) {
+    public BaseResponse listMaterial(@RequestParam("categoryId") String categoryId) {
         BaseResponse response = BaseResponse.builder().build();
         return OperateTemplate.invoke(response, BACK_QUERY_MATERIAL, new DefaultCallback() {
             @Override

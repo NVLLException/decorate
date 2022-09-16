@@ -40,32 +40,32 @@ public interface MaterialMapper {
     Integer updateGroup(MaterialGroupVo groupVo);
 
     @Update("update material set status=-1 where id in(${ids})")
-    Integer deleteMaterials(String ids);
+    Integer deleteMaterials(@Param("ids") String ids);
 
     @Update("update material_category set status=-1 where id in(${ids})")
-    Integer deleteCategorys(String ids);
+    Integer deleteCategorys(@Param("ids") String ids);
 
     @Update("update material_group set status=-1 where id in(${ids})")
-    Integer deleteGroups(String ids);
+    Integer deleteGroups(@Param("ids") String ids);
 
     @Select("select * from material where id=#{id} and status=0")
-    MaterialVo queryMaterialById(String id);
+    MaterialVo queryMaterialById(@Param("id") String id);
 
     @Select("select * from material where categoryId=#{categoryId} and status=0")
-    List<MaterialVo> queryMaterialList(String categoryId);
+    List<MaterialVo> queryMaterialList(@Param("categoryId") String categoryId);
 
     @Select("select * from material_category where groupId=#{groupId} and status=0")
-    List<MaterialCategoryVo> listMaterialCategoryByGroupId(String groupId);
+    List<MaterialCategoryVo> listMaterialCategoryByGroupId(@Param("groupId") String groupId);
 
-    @Select("select * from material_group and status=0")
+    @Select("select * from material_group where status=0")
     List<MaterialGroupVo> listGroup();
 
     @Select("select id from material_url where referId in(${referIds}) and type=#{type} and status=0")
-    List<String> queryUrlIds(String referIds, String type);
+    List<String> queryUrlIds(@Param("referIds") String referIds, @Param("type") String type);
 
     @Select("select id from material where categoryId in(${categoryIds}) and status=0")
-    List<String> queryMaterialIdsByCategoryId(String categoryIds);
+    List<String> queryMaterialIdsByCategoryId(@Param("categoryIds") String categoryIds);
 
     @Select("select id from material_category where groupId in(${groupIds}) and status=0")
-    List<String> queryCategoryIdsByGroupId(String groupIds);
+    List<String> queryCategoryIdsByGroupId(@Param("groupIds") String groupIds);
 }
