@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.util.Date;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/manage/upload")
@@ -57,6 +59,11 @@ public class UploadController {
             categoryVo.setId(id);
             categoryVo.setName(name);
             materialService.saveCategory(categoryVo);
+        } else if (URLTypeEnum.MATERIAL.equals(URLTypeEnum.getByCode(type))) {
+            MaterialVo materialVo = new MaterialVo();
+            materialVo.setId(id);
+            materialVo.setName(name);
+            materialService.saveMaterial(materialVo);
         }
         return baseResponse;
     }
@@ -71,7 +78,8 @@ public class UploadController {
                     .build();
         }
         try {
-            id = DigestUtils.md5Hex(fileNameSalt + id);
+            String salt = String.valueOf(System.currentTimeMillis());
+            id = DigestUtils.md5Hex(fileNameSalt + salt + id);
             File path = new File(filePath);
             if (!path.exists()) {
                 path.mkdir();

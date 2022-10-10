@@ -14,27 +14,24 @@
 <body>
 <h2>装修材料管理后台</h2>
 <div><a href="/page/material-group.html">分组管理</a>/分类管理</div>
-<div>
-    <div id="groupParent"></div>
+<div id="category">
+
 </div>
 
 </body>
-<script id="groupList" type="text/html">
-    {{each list as value}}
+<script id="material" type="text/html">
     <div class="easyui-layout" style="width:1000px;min-height:600px;margin: auto">
         <div data-options="region:'north'" style="height:50px;">
             <div class="easyui-panel" style="padding:5px;">
-                <a href="#" class="easyui-menubutton" date-options="plain:true" onclick="addCategory({{value.id}})"><span class="fa fa-plus"></span>增加材料</a>
-                <span style="margin-left: 20px;font-size: 20px"><b>{{value.name}}</b></span>
+                <a href="#" class="easyui-menubutton" date-options="plain:true" onclick="addMaterial({{id}})"><span class="fa fa-plus"></span>增加材料</a>
+                <span style="margin-left: 20px;font-size: 20px"><b>{{name}}</b></span>
             </div>
         </div>
-        <div data-options="region:'center'" id="categoryParent_{{value.id}}">
+        <div data-options="region:'center'" id="materialParent">
         </div>
     </div>
-    <div style="margin: 10px"></div>
-    {{/each}}
 </script>
-<script id="categoryList" type="text/html">
+<script id="materialList" type="text/html">
 
     {{each list}}
     {{if $index+1<5 || ($index+1)%4!=0}}
@@ -42,11 +39,25 @@
         <div style="display: block">
             <div id="view_{{$value.id}}" onClick="editMaterial({{$value.id}})" data-options="" class="easyui-panel" title="{{$value.name}}" style="width:130px;height:130px;padding:10px;">
                 <div>
-                    <div><img style="width: 75px;height: 75px" src="/img/{{$value.fileName}}"/></div>
+                    {{if $value.urlVoList != null}}
+                        {{each $value.urlVoList childValue childIndex}}
+                            <div><img style="width: 75px;height: 75px" src="/img/{{childValue != null ? childValue.fileName : ''}}"/></div>
+                        {{/each}}
+                    {{/if}}
                 </div>
             </div>
             <div id="edit_{{$value.id}}" class="edit_category" >
                 <div class="easyui-panel" title="Upload File" style="width:400px;padding:30px 70px 50px 70px">
+                    {{each $value.urlVoList childValue childIndex}}
+                        <div style="margin-bottom: 10px">
+                            <div>
+                                <img style="width: 75px;height: 75px" src="/img/{{childValue != null ? childValue.fileName : ''}}"/>
+                            </div>
+                            <div>
+                                <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-cut'" onClick="deletePic({{childValue}})" style="width:100px">删除图片</a>
+                            </div>
+                        </div>
+                    {{/each}}
                     <div style="margin-bottom:20px">
                         <div>分类名字:</div>
                         <input id="category_edit_input_{{$value.id}}" value="{{$value.name}}" class="easyui-textbox" style="width:100%">
@@ -74,34 +85,35 @@
 </script>
 <script type="text/javascript">
     $(function(){
-        doGetMaterialList();
-        $('#editCategoryDialog').dialog('close')
+        doRequest("/manage/query/queryCategory?id=" + getCategoryId(), null, (result) => {
+            console.error(result)
+            let data = {
+                id: getCategoryId(),
+                name: result.data.name
+            };
+            let html = template('material', data);
+            document.getElementById('category').innerHTML = html;
+            $.parser.parse($('#category'));
+            doGetMaterialList();
+        });
     })
-    function addCategory(groupId) {
+    function addMaterial() {
+        let categoryId = getCategoryId();
         let data = {
-            name: "请输入分类名",
-            groupId: groupId
+            name: "请输入材料名",
+            categoryId: categoryId
         }
-        doRequest("/manage/save/saveCategory",data,(result) => {
-            goGetCategory(groupId);
-            default_success_notify("添加分类成功");
+        doRequest("/manage/save/saveMaterial",data,(result) => {
+            doGetMaterialList();
+            default_success_notify("添加材料成功");
         })
     }
     function doGetMaterialList() {
         let categoryId = getCategoryId();
         doRequest("/manage/list/listMaterial?categoryId=" + categoryId,{},(result) => {
-            let groupList = result.data;
-            if (groupList != null) {
-                rendPage(groupList);
-            }
-        })
-    }
-
-    function goGetCategory(groupId) {
-        doRequest("/manage/list/listCategory?groupId=" + groupId,{},(result) => {
-            let categoryList = result.data;
-            if (categoryList != null) {
-                rendCategoryPage(categoryList, groupId);
+            let materialList = result.data;
+            if (materialList != null) {
+                rendPage(materialList);
             }
         })
     }
@@ -130,9 +142,9 @@
     function deleteCategory(category) {
         $.messager.confirm('删除分类', '确定删除分类 <span style="color:red">' + category.name + '</span> ? 删除后无法恢复', function(r){
             if (r){
-                doRequest("/manage/delete/deleteCategory?id=" + category.id,{},(result) => {
+                doRequest("/manage/delete/deleteMaterial?id=" + category.id,{},(result) => {
                     default_success_notify("删除分类成功!")
-                    doGetGroupList();
+                    doGetMaterialList();
                 })
             }
         });
@@ -161,25 +173,26 @@
         let file = $('#edit_' + category.id).find('input[type=file]')[0].files[0];
         let data = new FormData();
         data.append('file', file);
-        uploadFile('/manage/upload/uploadUrl?id='+ category.id + '&type=2&name=' + name, data, (result) => {
+        uploadFile('/manage/upload/uploadUrl?id='+ category.id + '&type=1&name=' + name, data, (result) => {
             $('#edit_' + category.id).hide()
             $("#category_edit_btn_" + category.id).show()
 
             $('#view_' + category.id).show()
             $("#category_save_btn_" + category.id).hide()
             $("#category_cancel_btn_" + category.id).hide()
-            goGetCategory(category.groupId);
+            doGetMaterialList();
         });
     }
 
     //渲染页面
-    function rendPage(groupList) {
+    function rendPage(materialList) {
         let data = {
-            list: groupList
+            list: materialList
         };
-        let html = template('groupList', data);
-        document.getElementById('groupParent').innerHTML = html;
-        $.parser.parse($('#groupParent'));
+        let html = template('materialList', data);
+        document.getElementById('materialParent').innerHTML = html;
+        $.parser.parse($('#materialParent'));
+        $(".edit_category").hide();
     }
 
     function rendCategoryPage(categoryList, groupId) {
@@ -201,6 +214,17 @@
         var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
         var r = window.location.search.substr(1).match(reg);
         if (r != null) return unescape(r[2]); return null;
+    }
+
+    function deletePic(pic) {
+        $.messager.confirm('删除图片', '确定删除图片? 删除后无法恢复', function(r){
+            if (r){
+                doRequest("/manage/delete/deleteUrl?id=" + pic.id,{},(result) => {
+                    default_success_notify("删除图片!");
+                    doGetMaterialList();
+                })
+            }
+        });
     }
 </script>
 <style>

@@ -68,4 +68,7 @@ public interface MaterialMapper {
 
     @Select("select id from material_category where groupId in(${groupIds}) and status=0")
     List<String> queryCategoryIdsByGroupId(@Param("groupIds") String groupIds);
+
+    @Select("select * from material_category where id = #{id}")
+    MaterialCategoryVo queryCategory(@Param("id") String id);
 }

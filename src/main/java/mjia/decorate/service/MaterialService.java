@@ -25,4 +25,6 @@ public interface MaterialService {
     boolean deleteCategory(String categoryId);
     boolean deleteGroup(String groupId);
     boolean deleteUrl(String id);
+
+    MaterialCategoryVo queryCategoryById(String id);
 }

@@ -1,8 +1,12 @@
 package mjia.decorate.configuration;
 
+import mjia.decorate.Interceptor.AuthInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
@@ -20,6 +24,8 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
 
     @Value("${resources.static.locations}")
     private String resourcesLocations;
+    @Autowired
+    AuthInterceptor authInterceptor;
 
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -28,5 +34,10 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
 
         registry.addResourceHandler("/page/**")
                 .addResourceLocations(resourcesLocations.split(","));
+    }
+
+    @Override
+    protected void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(authInterceptor).addPathPatterns("/manage/**");
     }
 }

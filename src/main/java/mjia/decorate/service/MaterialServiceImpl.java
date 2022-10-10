@@ -224,5 +224,10 @@ public class MaterialServiceImpl implements MaterialService{
         return true;
     }
 
+    @Override
+    public MaterialCategoryVo queryCategoryById(String id) {
+        return materialMapper.queryCategory(id);
+    }
+
 
 }
