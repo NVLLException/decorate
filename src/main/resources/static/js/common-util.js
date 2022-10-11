@@ -1,11 +1,17 @@
 function doRequest(url, data, _callback, _error_callback) {
+    let token = localStorage.getItem("material-token");
     $.ajax({url:url,
         type:"POST",
         dataType: "json",
         contentType : 'application/json',
         async: true,
+        beforeSend: function(request){
+            request.setRequestHeader("material-token", token)
+        },
         data: JSON.stringify(data),
-        success:function(result){
+        success:function(result,status,xhr){
+            let token = getHeader(xhr)['material-token'];
+            cacheToken(token);
             if (result.success) {
                 if (_callback) {
                     _callback(result);
@@ -33,7 +39,9 @@ function uploadFile(url, data, _callback, _error_callback) {
         cache: false,
         processData: false,
         contentType: false,
-        success:function(result){
+        success:function(result,status,xhr){
+            let token = getHeader(xhr)['material-token'];
+            cacheToken(token);
             if (result.success) {
                 if (_callback) {
                     _callback(result);
@@ -68,4 +76,21 @@ function default_success_notify($msg){
 
 function notify_msg($title, $msg){
     $.messager.alert($title,$msg);
+}
+
+function cacheToken(value) {
+    localStorage.setItem("material-token", value);
+}
+
+function getHeader(xhr) {
+    let headers = xhr.getAllResponseHeaders();
+    let arr = headers.trim().split(/[\r\n]+/);
+    let headerMap = {};
+    arr.forEach(function (line) {
+        let parts = line.split(': ');
+        let header = parts.shift();
+        let value = parts.join(': ');
+        headerMap[header] = value;
+    });
+    return headerMap;
 }

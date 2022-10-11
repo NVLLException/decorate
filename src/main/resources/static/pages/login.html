@@ -45,7 +45,8 @@
             password: hex_md5(password.toString())
         }
         doRequest("/manage/login/loginUser", reqData, (result) => {
-            if (result.data) {
+            if (result.data.success) {
+                localStorage.setItem("material-token", result.data.token);
                 window.location.href='/page/material-group.html';
             } else {
                 notify_msg("登录失败", "请检查用户名和密码");

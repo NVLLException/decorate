@@ -5,10 +5,14 @@ import mjia.decorate.controller.OperateTemplate;
 import mjia.decorate.entity.BaseResponse;
 import mjia.decorate.entity.UserVo;
 import mjia.decorate.service.AuthService;
+import mjia.decorate.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static mjia.decorate.enums.BizTypeEnum.*;
 
@@ -25,7 +29,18 @@ public class LoginController {
         return OperateTemplate.invoke(response, LOGIN_USER, new DefaultCallback() {
             @Override
             public void execute() {
-                response.setData(authService.checkUser(userVo));
+                Map result = new HashMap();
+                boolean loginSuccess = authService.checkUser(userVo);
+                if (loginSuccess) {
+                    Map info = new HashMap();
+                    info.put("userName", userVo.getName());
+                    String token = JwtUtil.sign("9999", info);
+                    result.put("success", true);
+                    result.put("token", token);
+                } else {
+                    result.put("success", true);
+                }
+                response.setData(result);
             }
         });
     }
