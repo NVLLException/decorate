@@ -10,9 +10,9 @@ function doRequest(url, data, _callback, _error_callback) {
         },
         data: JSON.stringify(data),
         success:function(result,status,xhr){
-            let token = getHeader(xhr)['material-token'];
-            cacheToken(token);
             if (result.success) {
+                let token = getHeader(xhr)['material-token'];
+                cacheToken(token);
                 if (_callback) {
                     _callback(result);
                 }
@@ -32,6 +32,7 @@ function doRequest(url, data, _callback, _error_callback) {
 }
 
 function uploadFile(url, data, _callback, _error_callback) {
+    let token = localStorage.getItem("material-token");
     $.ajax({
         url: url,
         type: 'POST',
@@ -39,10 +40,13 @@ function uploadFile(url, data, _callback, _error_callback) {
         cache: false,
         processData: false,
         contentType: false,
+        beforeSend: function(request){
+            request.setRequestHeader("material-token", token)
+        },
         success:function(result,status,xhr){
-            let token = getHeader(xhr)['material-token'];
-            cacheToken(token);
             if (result.success) {
+                let token = getHeader(xhr)['material-token'];
+                cacheToken(token);
                 if (_callback) {
                     _callback(result);
                 }

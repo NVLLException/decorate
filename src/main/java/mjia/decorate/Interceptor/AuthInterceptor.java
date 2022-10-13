@@ -8,13 +8,14 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
         String url = request.getRequestURI();
         if ("/manage/login/loginUser".equals(url)) {
             return true;
@@ -24,18 +25,8 @@ public class AuthInterceptor implements HandlerInterceptor {
             boolean valid = JwtUtil.checkSign(token);
             return valid;
         } catch (Exception e) {
-            return false;
+            e.printStackTrace();
         }
-    }
-
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) throws Exception {
-        /*String url = request.getRequestURI();
-        if (!"/manage/login/loginUser".equals(url)) {
-            Map info = new HashMap();
-            info.put("userName", "authUser");
-            String token = JwtUtil.sign("9999", info);
-            response.addHeader("material-token", token);
-        }*/
+        return false;
     }
 }

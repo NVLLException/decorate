@@ -2,6 +2,7 @@ drop database decorate;
 create database decorate;
 use decorate;
 drop table if exists user;
+drop table if exists customer;
 drop table if exists material;
 drop table if exists material_category;
 drop table if exists material_group;
@@ -15,6 +16,23 @@ create table user(
     key(`password`)
 )engine = InnoDB, character set ='UTF8';
 insert into user(`name`, `password`) values('admin',md5('admin'));
+create table customer(
+    `id` int(11) not null auto_increment,
+    `name` varchar(100) not null,
+    `openId` varchar(200) not null,
+    `phone` varchar(100) not null,
+    `wxIconUrl` varchar(100) not null,
+    `ext1` varchar(200),
+    `ext2` varchar(200),
+    `ext3` varchar(200),
+    `status` tinyint(1) default 0,
+    `creatorId` int(11),
+    `createTime` datetime,
+    `updaterId` int(11),
+    `updateTime` datetime,
+    primary key(`id`),
+    key(`openId`)
+)engine = InnoDB, character set ='UTF8';
 create table material(
     `id` int(11) not null auto_increment,
     `categoryId` int(11) not null,

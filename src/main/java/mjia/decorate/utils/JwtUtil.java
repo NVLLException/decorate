@@ -5,7 +5,9 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import org.apache.commons.codec.digest.DigestUtils;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
@@ -29,7 +31,7 @@ public class JwtUtil {
     public static String sign(String userId, Map<String, Object> info) {
         try {
             Date date = new Date(System.currentTimeMillis() + EXPIRE_TIME);
-            Algorithm algorithm = Algorithm.HMAC256(SECRET);
+            Algorithm algorithm = Algorithm.HMAC256(getSalt());
             return JWT.create()
                     //将userId保存到token里面
                     .withAudience(userId)
@@ -79,7 +81,7 @@ public class JwtUtil {
      * */
     public static boolean checkSign(String token) {
         try {
-            Algorithm algorithm  = Algorithm.HMAC256(SECRET);
+            Algorithm algorithm  = Algorithm.HMAC256(getSalt());
             JWTVerifier verifier = JWT.require(algorithm)
                     //.withClaim("username, username)
                     .build();
@@ -88,5 +90,12 @@ public class JwtUtil {
         }catch (JWTVerificationException e) {
             throw new RuntimeException("token 无效，请重新获取");
         }
+    }
+
+    private static String getSalt() {
+        Calendar calendar = Calendar.getInstance();
+        int day = calendar.get(Calendar.DAY_OF_YEAR);
+        String md5 = DigestUtils.md5Hex(String.valueOf(day));
+        return SECRET + md5;
     }
 }

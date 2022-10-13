@@ -23,6 +23,7 @@ public enum BizTypeEnum {
     SAVE_FILE("10001", "保存图片"),
 
     LOGIN_USER("11000", "管理员登录"),
+    CUSTOMER_USER("11001", "微信登录"),
     ;
 
     private String code;
