@@ -85,6 +85,7 @@ public class UploadController {
                 path.mkdir();
             }
             String fileName = getFileName(id, type, file.getOriginalFilename());
+            System.out.println(filePath + fileName);
             file.transferTo(new File(filePath, fileName));
             urlVo.setFileName(fileName);
             urlVo.setReferId(id);
