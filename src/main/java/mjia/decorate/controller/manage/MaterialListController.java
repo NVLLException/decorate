@@ -1,5 +1,6 @@
 package mjia.decorate.controller.manage;
 
+import lombok.extern.slf4j.Slf4j;
 import mjia.decorate.controller.DefaultCallback;
 import mjia.decorate.controller.OperateTemplate;
 import mjia.decorate.entity.BaseResponse;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static mjia.decorate.enums.BizTypeEnum.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/manage/list")
 public class MaterialListController {
@@ -21,7 +23,7 @@ public class MaterialListController {
     @RequestMapping("/listGroup")
     public BaseResponse listGroup() {
        BaseResponse response = BaseResponse.builder().build();
-        return OperateTemplate.invoke(response, BACK_QUERY_GROUP, new DefaultCallback() {
+        return OperateTemplate.invoke(log, response, BACK_QUERY_GROUP, new DefaultCallback() {
             @Override
             public void execute() {
                 response.setData(materialService.backEndListGroup());
@@ -32,7 +34,7 @@ public class MaterialListController {
     @RequestMapping("/listCategory")
     public BaseResponse listCategory(@RequestParam("groupId") String groupId) {
         BaseResponse response = BaseResponse.builder().build();
-        return OperateTemplate.invoke(response, BACK_QUERY_CATEGORY, new DefaultCallback() {
+        return OperateTemplate.invoke(log, response, BACK_QUERY_CATEGORY, new DefaultCallback() {
             @Override
             public void execute() {
                 response.setData(materialService.backEndListMaterialCategoryByGroupId(groupId));
@@ -43,7 +45,7 @@ public class MaterialListController {
     @RequestMapping("/listMaterial")
     public BaseResponse listMaterial(@RequestParam("categoryId") String categoryId) {
         BaseResponse response = BaseResponse.builder().build();
-        return OperateTemplate.invoke(response, BACK_QUERY_MATERIAL, new DefaultCallback() {
+        return OperateTemplate.invoke(log, response, BACK_QUERY_MATERIAL, new DefaultCallback() {
             @Override
             public void execute() {
                 response.setData(materialService.backEndListMaterialByCategoryId(categoryId));

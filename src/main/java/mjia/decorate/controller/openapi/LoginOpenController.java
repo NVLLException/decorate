@@ -1,5 +1,6 @@
 package mjia.decorate.controller.openapi;
 
+import lombok.extern.slf4j.Slf4j;
 import mjia.decorate.controller.DefaultCallback;
 import mjia.decorate.controller.OperateTemplate;
 import mjia.decorate.entity.BaseResponse;
@@ -15,6 +16,7 @@ import java.util.Map;
 
 import static mjia.decorate.enums.BizTypeEnum.CUSTOMER_USER;
 
+@Slf4j
 @RequestMapping("/openApi/login")
 public class LoginOpenController {
     @Autowired
@@ -23,7 +25,7 @@ public class LoginOpenController {
     @RequestMapping("/loginWxUser")
     public BaseResponse loginWxUser(@RequestBody WxUserVo wxUserVo) {
         BaseResponse response = BaseResponse.builder().build();
-        return OperateTemplate.invoke(response, CUSTOMER_USER, new DefaultCallback() {
+        return OperateTemplate.invoke(log, response, CUSTOMER_USER, new DefaultCallback() {
             @Override
             public void execute() {
                 Map result = new HashMap();

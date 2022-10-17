@@ -27,4 +27,5 @@ public interface MaterialService {
     boolean deleteUrl(String id);
 
     MaterialCategoryVo queryCategoryById(String id);
+    MaterialVo queryMaterialById(String id);
 }

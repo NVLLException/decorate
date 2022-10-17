@@ -1,5 +1,6 @@
 package mjia.decorate.controller.openapi;
 
+import lombok.extern.slf4j.Slf4j;
 import mjia.decorate.controller.CommonCallback;
 import mjia.decorate.controller.DefaultCallback;
 import mjia.decorate.controller.OperateTemplate;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static mjia.decorate.enums.BizTypeEnum.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/openApi/material")
 public class MaterialController {
@@ -25,7 +27,7 @@ public class MaterialController {
     @RequestMapping("/listMaterialByCategoryId")
     public BaseResponse queryMaterialVoListByCategoryId(@RequestParam("categoryId") String categoryId) {
         BaseResponse response = BaseResponse.builder().build();
-        return OperateTemplate.invoke(response, QUERY_MATERIAL, new DefaultCallback() {
+        return OperateTemplate.invoke(log, response, QUERY_MATERIAL, new DefaultCallback() {
             @Override
             public void execute() {
                 response.setData(materialService.listMaterialByCategoryId(categoryId));
@@ -36,7 +38,7 @@ public class MaterialController {
     @RequestMapping("/listCategoryByGroupId")
     public BaseResponse queryCategoryVoListByGroupId(@RequestParam("groupId") String groupId) {
         BaseResponse response = BaseResponse.builder().build();
-        return OperateTemplate.invoke(response, QUERY_CATEGORY, new DefaultCallback() {
+        return OperateTemplate.invoke(log, response, QUERY_CATEGORY, new DefaultCallback() {
             @Override
             public void execute() {
                 response.setData(materialService.listMaterialCategoryByGroupId(groupId));
@@ -47,7 +49,7 @@ public class MaterialController {
     @RequestMapping("/listGroup")
     public BaseResponse listGroup() {
         BaseResponse response = BaseResponse.builder().build();
-        return OperateTemplate.invoke(response, QUERY_GROUP, new DefaultCallback() {
+        return OperateTemplate.invoke(log, response, QUERY_GROUP, new DefaultCallback() {
             @Override
             public void execute() {
                 response.setData(materialService.listGroup());

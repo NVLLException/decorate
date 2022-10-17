@@ -1,0 +1,86 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="md5.js"></script>
+    <script type="text/javascript" src="env-var.js"></script>
+    <script type="text/javascript" src="common-util.js"></script>
+    <script type="text/javascript" src="template-web.js"></script>
+    <link type="text/css" rel="stylesheet" href="default/easyui.css"/>
+    <link type="text/css" rel="stylesheet" href="icon.css"/>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+</head>
+<body>
+<h2>装修材料管理后台</h2>
+<div><a href="/page/material-group.html">分组管理</a>/<a href="#" onclick="gotoMaterialList()">分类管理</a>/上传材料图片</div>
+<div id="pictureListParent" style="margin: auto;width: 400px">
+
+</div>
+<script id="pictureList" type="text/html">
+    {{if list}}
+    <div class="easyui-panel" title="预览图片" style="width:400px;padding:30px 70px 50px 70px">
+
+            {{each list childValue childIndex}}
+                <div style="margin-bottom: 10px">
+                    <div>
+                        <img style="width: 75px;height: 75px" src="/img/{{childValue != null ? childValue.fileName : ''}}"/>
+                    </div>
+                    <div>
+                        <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-cut'" onClick="deletePic({{childValue}})" style="width:100px">删除图片</a>
+                    </div>
+                </div>
+            {{/each}}
+    </div>
+    {{/if}}
+    <div style="margin-bottom:20px;margin-top: 20px;max-width: 200px">
+        <div>图片:</div>
+        <input class="easyui-filebox" id="upload_picture" data-options="prompt:'选择上传...'" style="width:100%">
+        <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'" onClick="uploadPicture()" style="width:70px">上传</a>
+    </div>
+</script>
+<script>
+    $(function(){
+        doGetPictureList();
+    })
+
+    function gotoMaterialList() {
+        window.location.href = '/page/material.html?categoryId=' + getParamValue("categoryId")
+    }
+
+    function doGetPictureList() {
+        let id = getParamValue("id");
+        doRequest('/manage/query/queryMaterial?id=' + id, null, result => {
+            randPage(result.data);
+        });
+    }
+
+    function randPage(material) {
+        let data = {
+            list: material.urlVoList
+        };
+        let html = template('pictureList', data);
+        document.getElementById('pictureListParent').innerHTML = html;
+        $.parser.parse($('#pictureListParent'));
+    }
+
+    function uploadPicture() {
+        let data = new FormData();
+        let id = getParamValue("id");
+        let file = $("#pictureListParent").find('input[type=file]')[0].files[0];
+        data.append('file', file);
+        uploadFile('/manage/upload/uploadUrl?name=a&id='+ id + '&type=1', data, (result) => {
+            doGetPictureList();
+        });
+    }
+    function deletePic(pic) {
+        $.messager.confirm('删除图片', '确定删除图片? 删除后无法恢复', function(r){
+            if (r){
+                doRequest("/manage/delete/deleteUrl?id=" + pic.id,{},(result) => {
+                    default_success_notify("删除图片成功!");
+                    doGetPictureList();
+                })
+            }
+        });
+    }
+</script>

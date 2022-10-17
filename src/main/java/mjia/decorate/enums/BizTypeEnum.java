@@ -8,6 +8,7 @@ public enum BizTypeEnum {
     BACK_QUERY_CATEGORY("1004", "后台查询分类列表"),
     BACK_QUERY_GROUP("1005", "后台查询图片分组"),
     BACK_QUERY_CATEGORY_DETAIL("1007", "后台查询分类"),
+    BACK_QUERY_MATERIAL_DETAIL("1008", "后台查询材料"),
 
 
     SAVE_MATERIAL("2000", "保存材料"),

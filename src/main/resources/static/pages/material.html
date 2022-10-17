@@ -38,15 +38,46 @@
     <div style="display: -webkit-inline-flex;margin: 10px 20px 10px 20px">
         <div style="display: block">
             <div id="view_{{$value.id}}" onClick="editMaterial({{$value.id}})" data-options="" class="easyui-panel" title="{{$value.name}}" style="width:130px;height:130px;padding:10px;">
-                <div>
+                <div style="cursor: pointer" onclick="uploadPicture({{$value}})">
                     {{if $value.urlVoList != null}}
                         {{each $value.urlVoList childValue childIndex}}
                             <div><img style="width: 75px;height: 75px" src="/img/{{childValue != null ? childValue.fileName : ''}}"/></div>
                         {{/each}}
                     {{/if}}
+                    {{if $value.urlVoList == null || $value.urlVoList.length ==0}}
+                    <div style="width: 75px;height: 75px"></div>
+                    {{/if}}
                 </div>
             </div>
             <div id="edit_{{$value.id}}" class="edit_category" >
+                <div class="easyui-panel" title="Upload File" style="width:400px;padding:30px 70px 50px 70px">
+                    <div style="margin-bottom:20px">
+                        <div>材料名字:</div>
+                        <input id="category_edit_input_{{$value.id}}" value="{{$value.name}}" class="easyui-textbox" style="width:100%">
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <div>描述:</div>
+                        <input id="category_edit_desc_input_{{$value.id}}" value="{{$value.description}}" class="easyui-textbox" style="width:100%">
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <div>价格:</div>
+                        <input id="category_edit_price_input_{{$value.id}}" value="{{$value.price}}" class="easyui-textbox" style="width:100%">
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <div>长度:</div>
+                        <input id="category_edit_length_input_{{$value.id}}" value="{{$value.length}}" class="easyui-textbox" style="width:60%">
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <div>宽度:</div>
+                        <input id="category_edit_width_input_{{$value.id}}" value="{{$value.width}}" class="easyui-textbox" style="width:60%">
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <div>高度:</div>
+                        <input id="category_edit_high_input_{{$value.id}}" value="{{$value.high}}" class="easyui-textbox" style="width:60%">
+                    </div>
+                </div>
+            </div>
+            <div id="edit_upload_{{$value.id}}" class="edit_category" >
                 <div class="easyui-panel" title="Upload File" style="width:400px;padding:30px 70px 50px 70px">
                     {{each $value.urlVoList childValue childIndex}}
                         <div style="margin-bottom: 10px">
@@ -58,10 +89,7 @@
                             </div>
                         </div>
                     {{/each}}
-                    <div style="margin-bottom:20px">
-                        <div>分类名字:</div>
-                        <input id="category_edit_input_{{$value.id}}" value="{{$value.name}}" class="easyui-textbox" style="width:100%">
-                    </div>
+
                     <div style="margin-bottom:20px">
                         <div>图片:</div>
                         <input class="easyui-filebox" id="category_edit_file_{{$value.id}}" data-options="prompt:'选择上传...'" style="width:100%">
@@ -70,6 +98,7 @@
             </div>
             <div style="display: block">
                 <a href="#" id="category_edit_btn_{{$value.id}}" class="easyui-linkbutton" data-options="iconCls:'icon-add'" onClick="editCategory({{$value}})" style="width:70px">编辑</a>
+                <!--<a href="#" id="category_edit_upload_btn_{{$value.id}}" class="easyui-linkbutton" data-options="iconCls:'icon-add'" onClick="editUpload({{$value}})" style="width:70px">上传</a>-->
                 <a href="#" id="category_save_btn_{{$value.id}}" class="easyui-linkbutton" style="display: none" data-options="iconCls:'icon-save'" onClick="saveCategory({{$value}})">保存</a>
                 <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-cut'" onClick="deleteCategory({{$value}})" style="width:70px">删除</a>
                 <a href="#" id="category_cancel_btn_{{$value.id}}" class="easyui-linkbutton" style="display: none" onClick="cancelCategory({{$value}})">取消编辑</a>
@@ -153,6 +182,17 @@
     function editCategory(category) {
         $('#edit_' + category.id).show()
         $("#category_edit_btn_" + category.id).hide()
+        $("#category_edit_upload_btn_" + category.id).hide()
+
+        $('#view_' + category.id).hide()
+        $("#category_save_btn_" + category.id).show()
+        $("#category_cancel_btn_" + category.id).show()
+    }
+
+    function editUpload(category) {
+        $('#edit_upload_' + category.id).show()
+        $("#category_edit_btn_" + category.id).hide()
+        $("#category_edit_upload_btn_" + category.id).hide()
 
         $('#view_' + category.id).hide()
         $("#category_save_btn_" + category.id).show()
@@ -161,7 +201,9 @@
 
     function cancelCategory(category) {
         $('#edit_' + category.id).hide()
+        $('#edit_upload_' + category.id).hide()
         $("#category_edit_btn_" + category.id).show()
+        $("#category_edit_upload_btn_" + category.id).show()
 
         $('#view_' + category.id).show()
         $("#category_save_btn_" + category.id).hide()
@@ -170,12 +212,47 @@
 
     function saveCategory(category) {
         let name = $('#category_edit_input_' + category.id).val();
+        let desc = $('#category_edit_desc_input_' + category.id).val();
+        let length = $('#category_edit_length_input_' + category.id).val();
+        let width = $('#category_edit_width_input_' + category.id).val();
+        let high = $('#category_edit_high_input_' + category.id).val();
+        let price = $('#category_edit_price_input_' + category.id).val();
+
+        let data = {
+            id: category.id,
+            name: name,
+            description: desc,
+            length: length,
+            width: width,
+            high:high,
+            price: price
+        }
+        doRequest('/manage/save/saveMaterial?' ,data, (result) => {
+            default_success_notify("保存分类成功!");
+            $('#edit_' + category.id).hide()
+            $("#category_edit_btn_" + category.id).show()
+            //$("#category_edit_upload_btn_" + category.id).show()
+
+            $('#view_' + category.id).show()
+            $("#category_save_btn_" + category.id).hide()
+            $("#category_cancel_btn_" + category.id).hide()
+            doGetMaterialList();
+        });
+    }
+
+    function upload(category) {
+        let name = $('#category_edit_input_' + category.id).val();
+        let desc = $('#category_edit_desc_input_' + category.id).val();
+        let length = $('#category_edit_length_input_' + category.id).val();
+        let width = $('#category_edit_width_input_' + category.id).val();
+        let high = $('#category_edithigh_input_' + category.id).val();
         let file = $('#edit_' + category.id).find('input[type=file]')[0].files[0];
         let data = new FormData();
         data.append('file', file);
-        uploadFile('/manage/upload/uploadUrl?id='+ category.id + '&type=1&name=' + name, data, (result) => {
+        uploadFile('/manage/upload/uploadUrl?id='+ category.id + '&type=1&name=' + name + "&description=" + desc + "&length=" + length + "&width=" + width + "&high=" + high, data, (result) => {
             $('#edit_' + category.id).hide()
             $("#category_edit_btn_" + category.id).show()
+            //$("#category_edit_upload_btn_" + category.id).show()
 
             $('#view_' + category.id).show()
             $("#category_save_btn_" + category.id).hide()
@@ -210,12 +287,6 @@
         return getParamValue('categoryId');
     }
 
-    function getParamValue(name) {
-        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-        var r = window.location.search.substr(1).match(reg);
-        if (r != null) return unescape(r[2]); return null;
-    }
-
     function deletePic(pic) {
         $.messager.confirm('删除图片', '确定删除图片? 删除后无法恢复', function(r){
             if (r){
@@ -225,6 +296,10 @@
                 })
             }
         });
+    }
+
+    function uploadPicture(material) {
+        window.location.href = '/page/upload.html?type=1&id=' + material.id + '&categoryId=' + getParamValue("categoryId")
     }
 </script>
 <style>

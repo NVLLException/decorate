@@ -1,5 +1,6 @@
 package mjia.decorate.controller.manage;
 
+import lombok.extern.slf4j.Slf4j;
 import mjia.decorate.controller.DefaultCallback;
 import mjia.decorate.controller.OperateTemplate;
 import mjia.decorate.entity.BaseResponse;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static mjia.decorate.enums.BizTypeEnum.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/manage/delete")
 public class DeleteController {
@@ -25,7 +27,7 @@ public class DeleteController {
     @RequestMapping("/deleteMaterial")
     public BaseResponse deleteMaterial(@RequestParam("id") String id) {
         BaseResponse response = BaseResponse.builder().build();
-        return OperateTemplate.invoke(response, DELETE_MATERIAL, new DefaultCallback() {
+        return OperateTemplate.invoke(log, response, DELETE_MATERIAL, new DefaultCallback() {
             @Override
             public void execute() {
                 materialService.deleteMaterial(id);
@@ -37,7 +39,7 @@ public class DeleteController {
     @RequestMapping("/deleteCategory")
     public BaseResponse deleteCategory(@RequestParam("id") String id) {
         BaseResponse response = BaseResponse.builder().build();
-        return OperateTemplate.invoke(response, DELETE_CATEGORY, new DefaultCallback() {
+        return OperateTemplate.invoke(log, response, DELETE_CATEGORY, new DefaultCallback() {
             @Override
             public void execute() {
                 materialService.deleteCategory(id);
@@ -49,7 +51,7 @@ public class DeleteController {
     @RequestMapping("/deleteGroup")
     public BaseResponse deleteGroup(@RequestParam("id") String id) {
         BaseResponse response = BaseResponse.builder().build();
-        return OperateTemplate.invoke(response, DELETE_GROUP, new DefaultCallback() {
+        return OperateTemplate.invoke(log, response, DELETE_GROUP, new DefaultCallback() {
             @Override
             public void execute() {
                 materialService.deleteGroup(id);
@@ -61,7 +63,7 @@ public class DeleteController {
     @RequestMapping("/deleteUrl")
     public BaseResponse deleteUrl(@RequestParam("id") String id) {
         BaseResponse response = BaseResponse.builder().build();
-        return OperateTemplate.invoke(response, DELETE_URL, new DefaultCallback() {
+        return OperateTemplate.invoke(log, response, DELETE_URL, new DefaultCallback() {
             @Override
             public void execute() {
                 materialService.deleteUrl(id);

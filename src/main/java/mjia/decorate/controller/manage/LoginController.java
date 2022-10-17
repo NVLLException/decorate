@@ -1,5 +1,6 @@
 package mjia.decorate.controller.manage;
 
+import lombok.extern.slf4j.Slf4j;
 import mjia.decorate.controller.DefaultCallback;
 import mjia.decorate.controller.OperateTemplate;
 import mjia.decorate.entity.BaseResponse;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 import static mjia.decorate.enums.BizTypeEnum.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/manage/login")
 public class LoginController {
@@ -27,7 +29,7 @@ public class LoginController {
     @RequestMapping("/loginUser")
     public BaseResponse loginUser(@RequestBody UserVo userVo) {
         BaseResponse response = BaseResponse.builder().build();
-        return OperateTemplate.invoke(response, LOGIN_USER, new DefaultCallback() {
+        return OperateTemplate.invoke(log, response, LOGIN_USER, new DefaultCallback() {
             @Override
             public void execute() {
                 Map result = new HashMap();
@@ -39,7 +41,7 @@ public class LoginController {
                     result.put("success", true);
                     result.put("token", token);
                 } else {
-                    result.put("success", true);
+                    result.put("success", false);
                 }
                 response.setData(result);
             }

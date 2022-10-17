@@ -1,5 +1,6 @@
 package mjia.decorate.controller.manage;
 
+import lombok.extern.slf4j.Slf4j;
 import mjia.decorate.controller.DefaultCallback;
 import mjia.decorate.controller.OperateTemplate;
 import mjia.decorate.entity.BaseResponse;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static mjia.decorate.enums.BizTypeEnum.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/manage/save")
 public class SaveControler {
@@ -24,7 +26,7 @@ public class SaveControler {
     @RequestMapping("/saveMaterial")
     public BaseResponse saveMaterial(@RequestBody MaterialVo materialVo) {
         BaseResponse response = BaseResponse.builder().build();
-        return OperateTemplate.invoke(response, SAVE_MATERIAL, new DefaultCallback() {
+        return OperateTemplate.invoke(log, response, SAVE_MATERIAL, new DefaultCallback() {
             @Override
             public void execute() {
                 materialService.saveMaterial(materialVo);
@@ -37,7 +39,7 @@ public class SaveControler {
     @RequestMapping("/saveCategory")
     public BaseResponse saveCategory(@RequestBody MaterialCategoryVo categoryVo) {
         BaseResponse response = BaseResponse.builder().build();
-        return OperateTemplate.invoke(response, SAVE_CATEGORY, new DefaultCallback() {
+        return OperateTemplate.invoke(log, response, SAVE_CATEGORY, new DefaultCallback() {
             @Override
             public void execute() {
                 materialService.saveCategory(categoryVo);
@@ -49,7 +51,7 @@ public class SaveControler {
     @RequestMapping("/saveGroup")
     public BaseResponse saveGroup(@RequestBody MaterialGroupVo groupVo) {
         BaseResponse response = BaseResponse.builder().build();
-        return OperateTemplate.invoke(response, SAVE_GROUP, new DefaultCallback() {
+        return OperateTemplate.invoke(log, response, SAVE_GROUP, new DefaultCallback() {
             @Override
             public void execute() {
                 materialService.saveGroup(groupVo);

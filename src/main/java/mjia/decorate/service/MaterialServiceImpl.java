@@ -229,5 +229,19 @@ public class MaterialServiceImpl implements MaterialService{
         return materialMapper.queryCategory(id);
     }
 
+    @Override
+    public MaterialVo queryMaterialById(String id) {
+        MaterialVo materialVo = materialMapper.queryMaterialById(id);
+        List<UrlVo> urlVos = urlMapper.queryListByReferIdAndType(id, URLTypeEnum.MATERIAL.getCode());
+        urlVos.forEach(urlVo -> {
+            if (materialVo.getId().equals(urlVo.getReferId())) {
+                if (Objects.isNull(materialVo.getUrlVoList())) {
+                    materialVo.setUrlVoList(new ArrayList());
+                }
+                materialVo.getUrlVoList().add(urlVo);
+            }
+        });
+        return materialVo;
+    }
 
 }

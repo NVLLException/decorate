@@ -1,5 +1,6 @@
 package mjia.decorate.controller.manage;
 
+import lombok.extern.slf4j.Slf4j;
 import mjia.decorate.controller.DefaultCallback;
 import mjia.decorate.controller.OperateTemplate;
 import mjia.decorate.entity.BaseResponse;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static mjia.decorate.enums.BizTypeEnum.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/manage/query")
 public class MaterialQueryController {
@@ -20,10 +22,21 @@ public class MaterialQueryController {
     @RequestMapping("/queryCategory")
     public BaseResponse queryCategory(@RequestParam("id") String id) {
         BaseResponse response = BaseResponse.builder().build();
-        return OperateTemplate.invoke(response, BACK_QUERY_CATEGORY_DETAIL, new DefaultCallback() {
+        return OperateTemplate.invoke(log, response, BACK_QUERY_CATEGORY_DETAIL, new DefaultCallback() {
             @Override
             public void execute() {
                 response.setData(materialService.queryCategoryById(id));
+            }
+        });
+    }
+
+    @RequestMapping("/queryMaterial")
+    public BaseResponse queryMaterial(@RequestParam("id") String id) {
+        BaseResponse response = BaseResponse.builder().build();
+        return OperateTemplate.invoke(log, response, BACK_QUERY_MATERIAL_DETAIL, new DefaultCallback() {
+            @Override
+            public void execute() {
+                response.setData(materialService.queryMaterialById(id));
             }
         });
     }

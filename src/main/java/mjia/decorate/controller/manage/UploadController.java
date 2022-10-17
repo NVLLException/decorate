@@ -1,9 +1,11 @@
 package mjia.decorate.controller.manage;
 
+import lombok.extern.slf4j.Slf4j;
 import mjia.decorate.entity.*;
 import mjia.decorate.enums.BizTypeEnum;
 import mjia.decorate.enums.URLTypeEnum;
 import mjia.decorate.service.MaterialService;
+import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +19,7 @@ import java.io.File;
 import java.util.Date;
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("/manage/upload")
 public class UploadController {
@@ -32,6 +35,9 @@ public class UploadController {
 
     @Value("${file.name.encrypt.salt}")
     private String fileNameSalt;
+
+    @Value("${zip.file.max.byte.size}")
+    private String maxFileSize;
 
     @Autowired
     private MaterialService materialService;
@@ -63,7 +69,7 @@ public class UploadController {
             MaterialVo materialVo = new MaterialVo();
             materialVo.setId(id);
             materialVo.setName(name);
-            materialService.saveMaterial(materialVo);
+            //materialService.saveMaterial(materialVo);
         }
         return baseResponse;
     }
@@ -79,21 +85,33 @@ public class UploadController {
         }
         try {
             String salt = String.valueOf(System.currentTimeMillis());
-            id = DigestUtils.md5Hex(fileNameSalt + salt + id);
+
+            String md5Id = DigestUtils.md5Hex(fileNameSalt + salt + id);
             File path = new File(filePath);
             if (!path.exists()) {
                 path.mkdir();
             }
-            String fileName = getFileName(id, type, file.getOriginalFilename());
-            System.out.println(filePath + fileName);
-            file.transferTo(new File(filePath, fileName));
+            String fileName = getFileName(md5Id, type, file.getOriginalFilename());
+
+            long fileSize = file.getSize();
+            //超过最大图片大小,压缩图片
+            if (getMaxFileSize() < fileSize) {
+                file.transferTo(new File(filePath, fileName));
+                //压缩至 getMaxFileSize = getMaxFileSize() / fileSize
+                Thumbnails.of(filePath + fileName).scale(1f).outputQuality(Float.valueOf(getMaxFileSize()) / Float.valueOf(fileSize)).toFile(filePath +fileName);
+            } else {
+                file.transferTo(new File(filePath, fileName));
+            }
             urlVo.setFileName(fileName);
-            urlVo.setReferId(id);
+            urlVo.setReferId(md5Id);
             urlVo.setType(type.getCode());
 
             //todo upload to cloud and set remote url
+
+            log.info("上传文件成功, id:[{}], type:[{}], fileName:[{}]", id, type.getName(), fileName);
             return BaseResponse.builder().success(true).data(urlVo).build();
         } catch (Exception e) {
+            log.error("上传文件失败, id:[{}], type:[{}], exception={}", id, type.getName(), e.getMessage());
             e.printStackTrace();
             return BaseResponse.builder()
                     .success(false)
@@ -105,5 +123,13 @@ public class UploadController {
 
     private String getFileName(String id, URLTypeEnum type, String fileName) {
         return DigestUtils.md5Hex(fileNameSalt + type.getCode() + id) + "." + fileName.split("\\.")[1];
+    }
+
+    private Long getMaxFileSize() {
+        try{
+            return Long.valueOf(maxFileSize);
+        } catch (Exception e) {
+            return Long.MAX_VALUE;
+        }
     }
 }
