@@ -72,11 +72,10 @@ public class MaterialServiceImpl implements MaterialService{
         categoryVos.forEach(categoryVo -> {
             urlVos.forEach(urlVo -> {
                 if (categoryVo.getId().equals(urlVo.getReferId())) {
-                    String url = urlUtil.getRemote() ? urlVo.getRemoteUrl() : urlVo.getLocalUrl();
-                    if (Objects.isNull(categoryVo.getUrlList())) {
-                        categoryVo.setUrlList(new ArrayList());
+                    if (Objects.isNull(categoryVo.getUrlVoList())) {
+                        categoryVo.setUrlVoList(new ArrayList());
                     }
-                    categoryVo.getUrlList().add(url);
+                    categoryVo.getUrlVoList().add(urlVo);
                 }
             });
         });

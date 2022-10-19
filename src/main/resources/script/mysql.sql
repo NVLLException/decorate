@@ -94,5 +94,6 @@ create table material_url(
                              `updaterId` int(11),
                              `updateTime` datetime,
                              primary key(`id`),
-                             key(`referId`)
+                             key(`referId`),
+                             key(`type`)
 )engine = InnoDB, character set ='UTF8';

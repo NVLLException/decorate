@@ -11,4 +11,5 @@ public class MaterialGroupVo extends BaseVo{
     private String ext1;
     private String ext2;
     private String ext3;
+    private List<MaterialCategoryVo> categoryList;
 }

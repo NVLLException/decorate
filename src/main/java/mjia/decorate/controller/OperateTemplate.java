@@ -3,10 +3,13 @@ package mjia.decorate.controller;
 import mjia.decorate.entity.BaseResponse;
 import mjia.decorate.enums.BizTypeEnum;
 import org.slf4j.Logger;
+import org.springframework.util.StopWatch;
 
 public class OperateTemplate {
     public static <T extends BaseResponse> T invoke( Logger log, BaseResponse baseResponse, BizTypeEnum bizTypeEnum, CommonCallback commonCallback) {
+        StopWatch stopWatch = new StopWatch();
         try{
+            stopWatch.start();
             commonCallback.before();
 
             commonCallback.execute();
@@ -20,7 +23,8 @@ public class OperateTemplate {
             baseResponse.setErrorMessage(bizTypeEnum.getName());
         } finally {
             commonCallback.after();
-            log.info("after execute method: [{}]", bizTypeEnum.getName());
+            stopWatch.stop();
+            log.info("after execute method: [{}], time:[{}]", bizTypeEnum.getName(), stopWatch.getTotalTimeMillis() + "ms");
         }
         return (T) baseResponse;
     }

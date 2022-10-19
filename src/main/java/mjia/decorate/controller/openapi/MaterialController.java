@@ -1,18 +1,23 @@
 package mjia.decorate.controller.openapi;
 
+import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 import mjia.decorate.controller.CommonCallback;
 import mjia.decorate.controller.DefaultCallback;
 import mjia.decorate.controller.OperateTemplate;
-import mjia.decorate.entity.BaseResponse;
-import mjia.decorate.entity.MaterialVo;
+import mjia.decorate.entity.*;
 import mjia.decorate.enums.BizTypeEnum;
 import mjia.decorate.service.MaterialService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static mjia.decorate.enums.BizTypeEnum.*;
 
@@ -23,6 +28,12 @@ public class MaterialController {
 
     @Autowired
     private MaterialService materialService;
+
+    @Value("${url.retrieve.remote}")
+    private String retrieveRemote;
+
+    @Value("${url.retrieve.domain}")
+    private String domain;
 
     @RequestMapping("/listMaterialByCategoryId")
     public BaseResponse queryMaterialVoListByCategoryId(@RequestParam("categoryId") String categoryId) {
@@ -52,8 +63,67 @@ public class MaterialController {
         return OperateTemplate.invoke(log, response, QUERY_GROUP, new DefaultCallback() {
             @Override
             public void execute() {
-                response.setData(materialService.listGroup());
+                List<MaterialGroupVo> groupList = materialService.listGroup();
+                groupList.forEach(groupVo -> {
+                    groupVo.setCategoryList(materialService.listMaterialCategoryByGroupId(groupVo.getId()));
+                });
+                response.setData(convertGroupVo(groupList));
             }
         });
+    }
+
+    private List<MaterialGroupOpenVo> convertGroupVo(List<MaterialGroupVo> groupVoList) {
+        try {
+            if (CollectionUtils.isEmpty(groupVoList)) {
+                return null;
+            }
+            List<MaterialGroupOpenVo> groupOpenVoList = new ArrayList();
+            groupVoList.forEach(groupVo -> {
+                MaterialGroupOpenVo groupOpenVo = new MaterialGroupOpenVo();
+                groupOpenVo.setGroupId(groupVo.getId());
+                groupOpenVo.setName(groupVo.getName());
+                groupOpenVoList.add(groupOpenVo);
+                if (CollectionUtils.isEmpty(groupVo.getCategoryList())) {
+                    return;
+                }
+                groupOpenVo.setChildren(convertCategoryVo(groupVo.getId(), groupVo.getCategoryList()));
+            });
+            return groupOpenVoList;
+        } catch (Exception e) {
+            log.error("convertGroupVo error: ", e);
+            return null;
+        }
+    }
+
+    private List<MaterialCategoryOpenVo> convertCategoryVo(String groupId, List<MaterialCategoryVo> categoryVoList) {
+        try{
+            if (CollectionUtils.isEmpty(categoryVoList)) {
+                return null;
+            }
+            List<MaterialCategoryOpenVo> categoryOpenVoList = new ArrayList();
+            categoryVoList.forEach(categoryVo -> {
+                MaterialCategoryOpenVo categoryOpenVo = new MaterialCategoryOpenVo();
+                categoryOpenVo.setGroupId(groupId);
+                categoryOpenVo.setName(categoryVo.getName());
+                categoryOpenVo.setThumbnail(getThumbnailUrL(categoryVo.getUrlVoList()));
+                categoryOpenVoList.add(categoryOpenVo);
+            });
+            return categoryOpenVoList;
+        } catch (Exception e) {
+            log.error("convertCategoryVo error: ", e);
+            return null;
+        }
+    }
+
+    private String getThumbnailUrL(List<UrlVo> urlVoList) {
+        if (CollectionUtils.isEmpty(urlVoList)) {
+            return "";
+        }
+        UrlVo urlVo = urlVoList.get(0);
+        if ("1".equals(retrieveRemote)) {
+            return "";
+        } else {
+            return domain + urlVo.getFileName();
+        }
     }
 }
