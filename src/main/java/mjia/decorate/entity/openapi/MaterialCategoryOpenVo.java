@@ -1,4 +1,4 @@
-package mjia.decorate.entity;
+package mjia.decorate.entity.openapi;
 
 import lombok.Data;
 

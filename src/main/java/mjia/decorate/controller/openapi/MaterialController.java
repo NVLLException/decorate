@@ -1,22 +1,22 @@
 package mjia.decorate.controller.openapi;
 
-import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
-import mjia.decorate.controller.CommonCallback;
 import mjia.decorate.controller.DefaultCallback;
 import mjia.decorate.controller.OperateTemplate;
 import mjia.decorate.entity.*;
-import mjia.decorate.enums.BizTypeEnum;
+import mjia.decorate.entity.openapi.MaterialCategoryOpenVo;
+import mjia.decorate.entity.openapi.MaterialGroupOpenVo;
+import mjia.decorate.entity.openapi.MaterialGroupParentOpenVo;
 import mjia.decorate.service.MaterialService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static mjia.decorate.enums.BizTypeEnum.*;
@@ -72,7 +72,7 @@ public class MaterialController {
         });
     }
 
-    private List<MaterialGroupOpenVo> convertGroupVo(List<MaterialGroupVo> groupVoList) {
+    private List<MaterialGroupParentOpenVo> convertGroupVo(List<MaterialGroupVo> groupVoList) {
         try {
             if (CollectionUtils.isEmpty(groupVoList)) {
                 return null;
@@ -88,7 +88,16 @@ public class MaterialController {
                 }
                 groupOpenVo.setChildren(convertCategoryVo(groupVo.getId(), groupVo.getCategoryList()));
             });
-            return groupOpenVoList;
+
+            List<MaterialGroupParentOpenVo> groupParentOpenVoList = new ArrayList();
+            groupOpenVoList.forEach(groupOpenVo -> {
+                MaterialGroupParentOpenVo groupParentOpenVo = new MaterialGroupParentOpenVo();
+                groupParentOpenVo.setGroupId(groupOpenVo.getGroupId());
+                groupParentOpenVo.setName(groupOpenVo.getName());
+                groupParentOpenVo.setChildren(Arrays.asList(groupOpenVo));
+                groupParentOpenVoList.add(groupParentOpenVo);
+            });
+            return groupParentOpenVoList;
         } catch (Exception e) {
             log.error("convertGroupVo error: ", e);
             return null;

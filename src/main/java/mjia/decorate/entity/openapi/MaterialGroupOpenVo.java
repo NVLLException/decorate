@@ -1,6 +1,7 @@
-package mjia.decorate.entity;
+package mjia.decorate.entity.openapi;
 
 import lombok.Data;
+import mjia.decorate.entity.openapi.MaterialCategoryOpenVo;
 
 import java.util.List;
 
