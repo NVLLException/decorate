@@ -3,6 +3,8 @@ package mjia.decorate.controller.openapi;
 import lombok.extern.slf4j.Slf4j;
 import mjia.decorate.controller.DefaultCallback;
 import mjia.decorate.controller.OperateTemplate;
+import mjia.decorate.controller.openapi.convert.GroupConvert;
+import mjia.decorate.controller.openapi.convert.MaterialConvert;
 import mjia.decorate.entity.*;
 import mjia.decorate.entity.openapi.MaterialCategoryOpenVo;
 import mjia.decorate.entity.openapi.MaterialGroupOpenVo;
@@ -29,11 +31,11 @@ public class MaterialController {
     @Autowired
     private MaterialService materialService;
 
-    @Value("${url.retrieve.remote}")
-    private String retrieveRemote;
+    @Autowired
+    private GroupConvert groupConvert;
 
-    @Value("${url.retrieve.domain}")
-    private String domain;
+    @Autowired
+    private MaterialConvert materialConvert;
 
     @RequestMapping("/listMaterialByCategoryId")
     public BaseResponse queryMaterialVoListByCategoryId(@RequestParam("categoryId") String categoryId) {
@@ -41,7 +43,7 @@ public class MaterialController {
         return OperateTemplate.invoke(log, response, QUERY_MATERIAL, new DefaultCallback() {
             @Override
             public void execute() {
-                response.setData(materialService.listMaterialByCategoryId(categoryId));
+                response.setData(materialConvert.convertMaterial(materialService.listMaterialByCategoryId(categoryId)));
             }
         });
     }
@@ -67,72 +69,12 @@ public class MaterialController {
                 groupList.forEach(groupVo -> {
                     groupVo.setCategoryList(materialService.listMaterialCategoryByGroupId(groupVo.getId()));
                 });
-                response.setData(convertGroupVo(groupList));
+                response.setData(groupConvert.convertGroupVo(groupList));
             }
         });
     }
 
-    private List<MaterialGroupParentOpenVo> convertGroupVo(List<MaterialGroupVo> groupVoList) {
-        try {
-            if (CollectionUtils.isEmpty(groupVoList)) {
-                return null;
-            }
-            List<MaterialGroupOpenVo> groupOpenVoList = new ArrayList();
-            groupVoList.forEach(groupVo -> {
-                MaterialGroupOpenVo groupOpenVo = new MaterialGroupOpenVo();
-                groupOpenVo.setGroupId(groupVo.getId());
-                groupOpenVo.setName(groupVo.getName());
-                groupOpenVoList.add(groupOpenVo);
-                if (CollectionUtils.isEmpty(groupVo.getCategoryList())) {
-                    return;
-                }
-                groupOpenVo.setChildren(convertCategoryVo(groupVo.getId(), groupVo.getCategoryList()));
-            });
 
-            List<MaterialGroupParentOpenVo> groupParentOpenVoList = new ArrayList();
-            groupOpenVoList.forEach(groupOpenVo -> {
-                MaterialGroupParentOpenVo groupParentOpenVo = new MaterialGroupParentOpenVo();
-                groupParentOpenVo.setGroupId(groupOpenVo.getGroupId());
-                groupParentOpenVo.setName(groupOpenVo.getName());
-                groupParentOpenVo.setChildren(Arrays.asList(groupOpenVo));
-                groupParentOpenVoList.add(groupParentOpenVo);
-            });
-            return groupParentOpenVoList;
-        } catch (Exception e) {
-            log.error("convertGroupVo error: ", e);
-            return null;
-        }
-    }
 
-    private List<MaterialCategoryOpenVo> convertCategoryVo(String groupId, List<MaterialCategoryVo> categoryVoList) {
-        try{
-            if (CollectionUtils.isEmpty(categoryVoList)) {
-                return null;
-            }
-            List<MaterialCategoryOpenVo> categoryOpenVoList = new ArrayList();
-            categoryVoList.forEach(categoryVo -> {
-                MaterialCategoryOpenVo categoryOpenVo = new MaterialCategoryOpenVo();
-                categoryOpenVo.setGroupId(groupId);
-                categoryOpenVo.setName(categoryVo.getName());
-                categoryOpenVo.setThumbnail(getThumbnailUrL(categoryVo.getUrlVoList()));
-                categoryOpenVoList.add(categoryOpenVo);
-            });
-            return categoryOpenVoList;
-        } catch (Exception e) {
-            log.error("convertCategoryVo error: ", e);
-            return null;
-        }
-    }
 
-    private String getThumbnailUrL(List<UrlVo> urlVoList) {
-        if (CollectionUtils.isEmpty(urlVoList)) {
-            return "";
-        }
-        UrlVo urlVo = urlVoList.get(0);
-        if ("1".equals(retrieveRemote)) {
-            return "";
-        } else {
-            return domain + urlVo.getFileName();
-        }
-    }
 }

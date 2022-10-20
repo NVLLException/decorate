@@ -52,6 +52,12 @@ public class MaterialServiceImpl implements MaterialService{
                     }
                     materialVo.getUrlList().add(url);
                 }
+                if (materialVo.getId().equals(urlVo.getReferId())) {
+                    if (Objects.isNull(materialVo.getUrlVoList())) {
+                        materialVo.setUrlVoList(new ArrayList());
+                    }
+                    materialVo.getUrlVoList().add(urlVo);
+                }
             });
         });
         return materialVos;
@@ -77,6 +83,7 @@ public class MaterialServiceImpl implements MaterialService{
                     }
                     categoryVo.getUrlVoList().add(urlVo);
                 }
+
             });
         });
         return categoryVos;
