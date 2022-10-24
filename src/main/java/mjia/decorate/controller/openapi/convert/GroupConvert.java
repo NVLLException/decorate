@@ -62,7 +62,7 @@ public class GroupConvert {
             List<MaterialCategoryOpenVo> categoryOpenVoList = new ArrayList();
             categoryVoList.forEach(categoryVo -> {
                 MaterialCategoryOpenVo categoryOpenVo = new MaterialCategoryOpenVo();
-                categoryOpenVo.setGroupId(groupId);
+                categoryOpenVo.setGroupId(categoryVo.getId());
                 categoryOpenVo.setName(categoryVo.getName());
                 categoryOpenVo.setThumbnail(pictureUtil.getThumbnailUrL(categoryVo.getUrlVoList()));
                 categoryOpenVoList.add(categoryOpenVo);

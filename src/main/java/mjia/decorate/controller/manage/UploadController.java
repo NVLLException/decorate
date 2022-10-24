@@ -5,6 +5,7 @@ import mjia.decorate.entity.*;
 import mjia.decorate.enums.BizTypeEnum;
 import mjia.decorate.enums.URLTypeEnum;
 import mjia.decorate.service.MaterialService;
+import mjia.decorate.utils.FileSyncToCloudUtil;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,9 @@ public class UploadController {
 
     @Autowired
     private MaterialService materialService;
+
+    @Autowired
+    private FileSyncToCloudUtil fileSyncToCloudUtil;
 
     @RequestMapping("/uploadUrl")
     public BaseResponse uploadMaterial(@RequestParam MultipartFile file, @RequestParam("type") String type, @RequestParam("id") String id, @RequestParam("name") String name) {
@@ -107,7 +111,7 @@ public class UploadController {
             urlVo.setType(type.getCode());
 
             //todo upload to cloud and set remote url
-
+            fileSyncToCloudUtil.syncToCloud(filePath, fileName);
             log.info("上传文件成功, id:[{}], type:[{}], fileName:[{}]", id, type.getName(), fileName);
             return BaseResponse.builder().success(true).data(urlVo).build();
         } catch (Exception e) {

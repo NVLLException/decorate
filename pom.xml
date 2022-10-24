@@ -119,6 +119,19 @@
             </exclusions>
         </dependency>
 
+        <!--腾讯云cos SDK-->
+        <dependency>
+            <groupId>com.qcloud</groupId>
+            <artifactId>cos_api</artifactId>
+            <version>5.6.89</version>
+        </dependency>
+        <!---腾讯云cos SDK依赖jar-->
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.10</version>
+        </dependency>
+
 
     </dependencies>
 
