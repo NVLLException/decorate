@@ -15,13 +15,16 @@ public class PictureUtil {
     @Value("${url.retrieve.domain}")
     private String domain;
 
+    @Value("${url.retrieve.remote.domain}")
+    private String remoteDomain;
+
     public String getThumbnailUrL(List<UrlVo> urlVoList) {
         if (CollectionUtils.isEmpty(urlVoList)) {
             return "";
         }
         UrlVo urlVo = urlVoList.get(0);
         if ("1".equals(retrieveRemote)) {
-            return "";
+            return remoteDomain + urlVo.getFileName();
         } else {
             return domain + urlVo.getFileName();
         }
