@@ -54,7 +54,7 @@ public class MaterialController {
         return OperateTemplate.invoke(log, response, QUERY_CATEGORY, new DefaultCallback() {
             @Override
             public void execute() {
-                response.setData(materialService.listMaterialCategoryByGroupId(groupId));
+                response.setData(groupConvert.convertCategoryVo(null, materialService.listMaterialCategoryByGroupId(groupId)));
             }
         });
     }
