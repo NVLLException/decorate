@@ -29,6 +29,9 @@ public class MaterialConvert {
             openVo.setThumb(pictureUtil.getThumbnailUrL(material.getUrlVoList()));
             openVo.setPrice(material.getPrice() != null ? material.getPrice().toString() : "");
             openVo.setDesc(material.getDescription());
+            openVo.setLength(material.getLength());
+            openVo.setWidth(material.getWidth());
+            openVo.setHigh(material.getHigh());
             openVoList.add(openVo);
         });
         return openVoList;
