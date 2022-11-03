@@ -12,4 +12,5 @@ public class MaterialListOpenVo {
     private String length;
     private String width;
     private String high;
+    private String size;
 }

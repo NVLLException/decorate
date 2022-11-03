@@ -8,6 +8,7 @@ import mjia.decorate.entity.openapi.MaterialDetailOpenVo;
 import mjia.decorate.entity.openapi.MaterialListOpenVo;
 import mjia.decorate.entity.openapi.MaterialOpenVo;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,6 +36,18 @@ public class MaterialConvert {
             openVo.setLength(material.getLength());
             openVo.setWidth(material.getWidth());
             openVo.setHigh(material.getHigh());
+
+            List<String> size = new ArrayList();
+            if (StringUtils.isNotBlank(material.getLength())) {
+                size.add(material.getLength());
+            }
+            if (StringUtils.isNotBlank(material.getWidth())) {
+                size.add(material.getWidth());
+            }
+            if (StringUtils.isNotBlank(material.getHigh())) {
+                size.add(material.getHigh());
+            }
+            openVo.setSize(StringUtils.join(size, "x"));
             openVoList.add(openVo);
         });
         return openVoList;
@@ -49,6 +62,17 @@ public class MaterialConvert {
         detail.setLength(materialVo.getLength());
         detail.setHigh(materialVo.getHigh());
         detail.setWidth(materialVo.getWidth());
+        List<String> size = new ArrayList();
+        if (StringUtils.isNotBlank(materialVo.getLength())) {
+            size.add(materialVo.getLength());
+        }
+        if (StringUtils.isNotBlank(materialVo.getWidth())) {
+            size.add(materialVo.getWidth());
+        }
+        if (StringUtils.isNotBlank(materialVo.getHigh())) {
+            size.add(materialVo.getHigh());
+        }
+        detail.setSize(StringUtils.join(size, "x"));
         detail.setImages(pictureUtil.getThumbnailUrLList(materialVo.getUrlVoList()));
         return detail;
     }

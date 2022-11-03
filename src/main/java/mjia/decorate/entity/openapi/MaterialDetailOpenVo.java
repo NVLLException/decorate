@@ -13,5 +13,6 @@ public class MaterialDetailOpenVo {
     private String high;
     private String width;
     private String length;
+    private String size;
     private List<String> images;
 }
