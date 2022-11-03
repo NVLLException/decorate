@@ -37,6 +37,17 @@ public class MaterialController {
     @Autowired
     private MaterialConvert materialConvert;
 
+    @RequestMapping("/queryMaterial")
+    public BaseResponse queryMaterial(@RequestParam("id") String id) {
+        BaseResponse response = BaseResponse.builder().build();
+        return OperateTemplate.invoke(log, response, QUERY_MATERIAL_DETAIL, new DefaultCallback() {
+            @Override
+            public void execute() {
+                response.setData(materialConvert.convertMaterialDetail(materialService.queryMaterial(id)));
+            }
+        });
+    }
+
     @RequestMapping("/listMaterialByCategoryId")
     public BaseResponse queryMaterialVoListByCategoryId(@RequestParam("categoryId") String categoryId) {
         BaseResponse response = BaseResponse.builder().build();

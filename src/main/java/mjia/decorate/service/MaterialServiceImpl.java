@@ -63,6 +63,8 @@ public class MaterialServiceImpl implements MaterialService{
         return materialVos;
     }
 
+
+
     @Override
     public List<MaterialCategoryVo> listMaterialCategoryByGroupId(String groupId) {
         List<MaterialCategoryVo> categoryVos = materialMapper.listMaterialCategoryByGroupId(groupId);
@@ -92,6 +94,14 @@ public class MaterialServiceImpl implements MaterialService{
     @Override
     public List<MaterialGroupVo> listGroup() {
         return materialMapper.listGroup();
+    }
+
+    @Override
+    public MaterialVo queryMaterial(String id) {
+        MaterialVo materialVo = materialMapper.queryMaterialById(id);
+        List<UrlVo> urlVos = urlMapper.queryListByReferIdAndType(id, URLTypeEnum.MATERIAL.getCode());
+        materialVo.setUrlVoList(urlVos);
+        return materialVo;
     }
 
     @Override

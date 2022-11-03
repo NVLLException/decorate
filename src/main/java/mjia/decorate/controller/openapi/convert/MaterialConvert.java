@@ -2,8 +2,11 @@ package mjia.decorate.controller.openapi.convert;
 
 import lombok.extern.slf4j.Slf4j;
 import mjia.decorate.controller.openapi.utils.PictureUtil;
+import mjia.decorate.entity.MaterialGroupVo;
 import mjia.decorate.entity.MaterialVo;
+import mjia.decorate.entity.openapi.MaterialDetailOpenVo;
 import mjia.decorate.entity.openapi.MaterialListOpenVo;
+import mjia.decorate.entity.openapi.MaterialOpenVo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -35,5 +38,18 @@ public class MaterialConvert {
             openVoList.add(openVo);
         });
         return openVoList;
+    }
+
+    public MaterialDetailOpenVo convertMaterialDetail(MaterialVo materialVo) {
+        MaterialDetailOpenVo detail = new MaterialDetailOpenVo();
+        detail.setDesc(materialVo.getDescription());
+        detail.setTitle(materialVo.getName());
+        detail.setPrice(materialVo.getPrice() != null ? materialVo.getPrice().toString() : "");
+        detail.setId(materialVo.getId());
+        detail.setLength(materialVo.getLength());
+        detail.setHigh(materialVo.getHigh());
+        detail.setWidth(materialVo.getWidth());
+        detail.setImages(pictureUtil.getThumbnailUrLList(materialVo.getUrlVoList()));
+        return detail;
     }
 }

@@ -4,6 +4,7 @@ public enum BizTypeEnum {
     QUERY_MATERIAL("1000", "查询图片列表"),
     QUERY_CATEGORY("1001", "查询分类列表"),
     QUERY_GROUP("1002", "查询图片分组"),
+    QUERY_MATERIAL_DETAIL("1010", "查询图片"),
     BACK_QUERY_MATERIAL("1003", "后台查询图片列表"),
     BACK_QUERY_CATEGORY("1004", "后台查询分类列表"),
     BACK_QUERY_GROUP("1005", "后台查询图片分组"),
