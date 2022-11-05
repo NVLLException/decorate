@@ -24,7 +24,7 @@
             {{each list childValue childIndex}}
                 <div style="margin-bottom: 10px">
                     <div>
-                        <img style="width: 75px;height: 75px" src="/img/{{childValue != null ? childValue.fileName : ''}}"/>
+                        <img style="width: 75px;height: 75px" src="https://tupian-1314348862.cos.ap-chengdu.myqcloud.com/{{childValue != null ? childValue.fileName : ''}}"/>
                     </div>
                     <div>
                         <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-cut'" onClick="deletePic({{childValue}})" style="width:100px">删除图片</a>
