@@ -41,7 +41,7 @@
                 <div style="cursor: pointer" onclick="uploadPicture({{$value}})">
                     {{if $value.urlVoList != null}}
                         {{each $value.urlVoList childValue childIndex}}
-                            <div><img style="width: 75px;height: 75px" src="/img/{{childValue != null ? childValue.fileName : ''}}"/></div>
+                            <div><img style="width: 75px;height: 75px" src="https://tupian-1314348862.cos.ap-chengdu.myqcloud.com/{{childValue != null ? childValue.fileName : ''}}"/></div>
                         {{/each}}
                     {{/if}}
                     {{if $value.urlVoList == null || $value.urlVoList.length ==0}}
