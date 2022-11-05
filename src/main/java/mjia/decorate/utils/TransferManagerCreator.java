@@ -81,7 +81,7 @@ public class TransferManagerCreator {
 
         // 设置存储类型（如有需要，不需要请忽略此行代码）, 默认是标准(Standard), 低频(standard_ia)
         // 更多存储类型请参见 https://cloud.tencent.com/document/product/436/33417
-                putObjectRequest.setStorageClass(StorageClass.Standard_IA);
+                putObjectRequest.setStorageClass(StorageClass.Standard);
 
         //若需要设置对象的自定义 Headers 可参照下列代码,若不需要可省略下面这几行,对象自定义 Headers 的详细信息可参考https://cloud.tencent.com/document/product/436/13361
                 //ObjectMetadata objectMetadata = new ObjectMetadata();
