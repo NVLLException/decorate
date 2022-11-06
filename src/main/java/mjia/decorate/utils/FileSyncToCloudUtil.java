@@ -2,6 +2,7 @@ package mjia.decorate.utils;
 
 import com.qcloud.cos.transfer.TransferManager;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
@@ -37,9 +38,9 @@ public class FileSyncToCloudUtil {
     }
 
 
-    public boolean syncToCloud(String filePath, String fileName) {
+    public boolean syncToCloud(Logger log, String filePath, String fileName) {
         try {
-            TransferManagerCreator.upload(secretId, secretKey, filePath, fileName);
+            TransferManagerCreator.upload(log, secretId, secretKey, filePath, fileName);
             return true;
         } catch (Exception e) {
             e.printStackTrace();

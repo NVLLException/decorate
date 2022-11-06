@@ -15,6 +15,7 @@ import com.qcloud.cos.region.Region;
 import com.qcloud.cos.transfer.TransferManager;
 import com.qcloud.cos.transfer.TransferManagerConfiguration;
 import com.qcloud.cos.transfer.Upload;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.util.HashMap;
@@ -24,11 +25,10 @@ import java.util.concurrent.*;
 
 public class TransferManagerCreator {
     // 创建 TransferManager 实例，这个实例用来后续调用高级接口
-    private static TransferManager createTransferManager(String secretId, String secretKey) {
+    private static TransferManager createTransferManager(COSClient cosClient, String secretId, String secretKey) {
         try {
             // 创建一个 COSClient 实例，这是访问 COS 服务的基础实例。
             // 详细代码参见本页: 简单操作 -> 创建 COSClient
-            COSClient cosClient = createCOSClient(secretId, secretKey);
 
             // 自定义线程池大小，建议在客户端与 COS 网络充足（例如使用腾讯云的 CVM，同地域上传 COS）的情况下，设置成16或32即可，可较充分的利用网络资源
             // 对于使用公网传输且网络带宽质量不高的情况，建议减小该值，避免因网速过慢，造成请求超时。
@@ -53,23 +53,26 @@ public class TransferManagerCreator {
         }
     }
 
-    public static void shutdownTransferManager(TransferManager transferManager) {
+    public static void shutdownTransferManager(Logger log, TransferManager transferManager, COSClient cosClient) {
         // 指定参数为 true, 则同时会关闭 transferManager 内部的 COSClient 实例。
         // 指定参数为 false, 则不会关闭 transferManager 内部的 COSClient 实例。
         try {
             if (Objects.nonNull(transferManager)) {
                 transferManager.shutdownNow(true);
+                cosClient.shutdown();
+                log.info("shutdownTransferManager success");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("shutdownTransferManager error:", e);
         }
     }
 
     // 上传对象
-    public static Upload upload(String secretId, String secretKey, String localFilePath, String fineName) {
+    public static Upload upload(Logger log, String secretId, String secretKey, String localFilePath, String fineName) {
         // 使用高级接口必须先保证本进程存在一个 TransferManager 实例，如果没有则创建
         // 详细代码参见本页：高级接口 -> 创建 TransferManager
-        TransferManager transferManager = createTransferManager(secretId, secretKey);
+        COSClient cosClient = createCOSClient(secretId, secretKey);
+        TransferManager transferManager = createTransferManager(cosClient, secretId, secretKey);
 
         // 存储桶的命名格式为 BucketName-APPID，此处填写的存储桶名称必须为此格式
                 String bucketName = "tupian-1314348862";
@@ -101,17 +104,13 @@ public class TransferManagerCreator {
                     Upload upload = transferManager.upload(putObjectRequest);
                     UploadResult uploadResult = upload.waitForUploadResult();
                     return upload;
-                } catch (CosServiceException e) {
-                    e.printStackTrace();
-                } catch (CosClientException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    log.error("上传图片到cos异常:", e);
                 }
 
         // 确定本进程不再使用 transferManager 实例之后，关闭之
         // 详细代码参见本页：高级接口 -> 关闭 TransferManager
-                shutdownTransferManager(transferManager);
+                shutdownTransferManager(log, transferManager, cosClient);
                 return null;
     }
 

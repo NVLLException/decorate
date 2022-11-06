@@ -8,6 +8,7 @@ import mjia.decorate.service.MaterialService;
 import mjia.decorate.utils.FileSyncToCloudUtil;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import sun.misc.GC;
 
 import java.io.File;
 import java.util.Date;
@@ -56,7 +58,7 @@ public class UploadController {
         } else if (URLTypeEnum.GROUP.equals(URLTypeEnum.getByCode(type))) {
             filePath = groupFilePath;
         }
-        BaseResponse baseResponse = saveFile(file, filePath, id, URLTypeEnum.getByCode(type));
+        BaseResponse baseResponse = saveFile(log, file, filePath, id, URLTypeEnum.getByCode(type));
         if(!baseResponse.getSuccess()) {
             return baseResponse;
         }
@@ -78,7 +80,7 @@ public class UploadController {
         return baseResponse;
     }
 
-    private BaseResponse saveFile(MultipartFile file, String filePath, String id, URLTypeEnum type) {
+    private BaseResponse saveFile(Logger log, MultipartFile file, String filePath, String id, URLTypeEnum type) {
         UrlVo urlVo = UrlVo.builder().build();
         if (file.isEmpty()) {
             return BaseResponse.builder()
@@ -99,7 +101,7 @@ public class UploadController {
 
             long fileSize = file.getSize();
             //超过最大图片大小,压缩图片
-            if (getMaxFileSize() < fileSize) {
+            if (getMaxFileSize() > fileSize) {
                 file.transferTo(new File(filePath, fileName));
                 //压缩至 getMaxFileSize = getMaxFileSize() / fileSize
                 Thumbnails.of(filePath + fileName).scale(1f).outputQuality(Float.valueOf(getMaxFileSize()) / Float.valueOf(fileSize)).toFile(filePath +fileName);
@@ -111,7 +113,7 @@ public class UploadController {
             urlVo.setType(type.getCode());
 
             //todo upload to cloud and set remote url
-            fileSyncToCloudUtil.syncToCloud(filePath, fileName);
+            fileSyncToCloudUtil.syncToCloud(log, filePath, fileName);
             log.info("上传文件成功, id:[{}], type:[{}], fileName:[{}]", id, type.getName(), fileName);
             return BaseResponse.builder().success(true).data(urlVo).build();
         } catch (Exception e) {
