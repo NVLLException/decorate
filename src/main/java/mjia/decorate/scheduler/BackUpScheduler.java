@@ -33,7 +33,7 @@ public class BackUpScheduler {
     @Scheduled(cron = "0 0 2 * * ?")
     public void backUpSql() {
         try{
-            Runtime.getRuntime().exec(String.format("mysqladmin -uroot -p'%s' decorate > %s", password, fileName));
+            Runtime.getRuntime().exec(String.format("mysqldump -uroot -p'%s' decorate --skip-add-locks > %s", password, fileName));
             fileSyncToCloudUtil.syncToCloud(log, bucketName, "", fileName);
             new File(fileName).deleteOnExit();
             log.info("backUpSql success");
