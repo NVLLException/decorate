@@ -38,12 +38,12 @@ public class FileSyncToCloudUtil {
     }
 
 
-    public boolean syncToCloud(Logger log, String filePath, String fileName) {
+    public boolean syncToCloud(Logger log, String bucket, String filePath, String fileName) {
         try {
-            TransferManagerCreator.upload(log, secretId, secretKey, filePath, fileName);
+            TransferManagerCreator.upload(log, secretId, secretKey, bucket, filePath, fileName);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("syncToCloud error: ", e);
             return false;
         }
 

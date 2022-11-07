@@ -42,6 +42,9 @@ public class UploadController {
     @Value("${zip.file.max.byte.size}")
     private String maxFileSize;
 
+    @Value("${decorate.bucket.upload.name}")
+    private String bucketName;
+
     @Autowired
     private MaterialService materialService;
 
@@ -112,13 +115,14 @@ public class UploadController {
             urlVo.setReferId(md5Id);
             urlVo.setType(type.getCode());
 
-            //todo upload to cloud and set remote url
-            fileSyncToCloudUtil.syncToCloud(log, filePath, fileName);
+            Boolean syncFlag = fileSyncToCloudUtil.syncToCloud(log, bucketName, filePath, fileName);
+            if (!syncFlag) {
+                throw new Exception("syncToCloud error");
+            }
             log.info("上传文件成功, id:[{}], type:[{}], fileName:[{}]", id, type.getName(), fileName);
             return BaseResponse.builder().success(true).data(urlVo).build();
         } catch (Exception e) {
             log.error("上传文件失败, id:[{}], type:[{}], exception={}", id, type.getName(), e.getMessage());
-            e.printStackTrace();
             return BaseResponse.builder()
                     .success(false)
                     .errorCode(BizTypeEnum.SAVE_FILE.getCode())

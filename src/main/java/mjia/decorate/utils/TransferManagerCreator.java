@@ -15,6 +15,7 @@ import com.qcloud.cos.region.Region;
 import com.qcloud.cos.transfer.TransferManager;
 import com.qcloud.cos.transfer.TransferManagerConfiguration;
 import com.qcloud.cos.transfer.Upload;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -68,14 +69,14 @@ public class TransferManagerCreator {
     }
 
     // 上传对象
-    public static Upload upload(Logger log, String secretId, String secretKey, String localFilePath, String fineName) {
+    public static Upload upload(Logger log, String secretId, String secretKey, String bucket, String localFilePath, String fineName) {
         // 使用高级接口必须先保证本进程存在一个 TransferManager 实例，如果没有则创建
         // 详细代码参见本页：高级接口 -> 创建 TransferManager
         COSClient cosClient = createCOSClient(secretId, secretKey);
         TransferManager transferManager = createTransferManager(cosClient, secretId, secretKey);
 
         // 存储桶的命名格式为 BucketName-APPID，此处填写的存储桶名称必须为此格式
-                String bucketName = "tupian-1314348862";
+                String bucketName = StringUtils.isBlank(bucket) ? "tupian-1314348862" : bucket;
         // 对象键(Key)是对象在存储桶中的唯一标识。
                 String key = fineName;
         // 本地文件路径
