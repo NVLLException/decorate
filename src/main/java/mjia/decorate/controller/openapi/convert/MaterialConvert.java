@@ -47,7 +47,7 @@ public class MaterialConvert {
             if (StringUtils.isNotBlank(material.getHigh())) {
                 size.add(material.getHigh());
             }
-            openVo.setSize(StringUtils.join(size, "x"));
+            openVo.setSize(StringUtils.join(size, " x "));
             openVoList.add(openVo);
         });
         return openVoList;
@@ -72,7 +72,7 @@ public class MaterialConvert {
         if (StringUtils.isNotBlank(materialVo.getHigh())) {
             size.add(materialVo.getHigh());
         }
-        detail.setSize(StringUtils.join(size, "x"));
+        detail.setSize(StringUtils.join(size, " x "));
         detail.setImages(pictureUtil.getThumbnailUrLList(materialVo.getUrlVoList()));
         return detail;
     }
