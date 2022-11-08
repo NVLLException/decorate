@@ -104,7 +104,7 @@ public class UploadController {
 
             long fileSize = file.getSize();
             //超过最大图片大小,压缩图片
-            if (getMaxFileSize() > fileSize) {
+            if (getMaxFileSize() < fileSize) {
                 file.transferTo(new File(filePath, fileName));
                 //压缩至 getMaxFileSize = getMaxFileSize() / fileSize
                 Thumbnails.of(filePath + fileName).scale(1f).outputQuality(Float.valueOf(getMaxFileSize()) / Float.valueOf(fileSize)).toFile(filePath +fileName);
