@@ -98,13 +98,12 @@ public class TransferManagerCreator {
                 objectMetadata.setUserMetadata(userMeta);*/
 
                 //putObjectRequest.withMetadata(objectMetadata);
-
+                Upload upload = null;
                 try {
                     // 高级接口会返回一个异步结果Upload
                     // 可同步地调用 waitForUploadResult 方法等待上传完成，成功返回UploadResult, 失败抛出异常
-                    Upload upload = transferManager.upload(putObjectRequest);
+                    upload = transferManager.upload(putObjectRequest);
                     UploadResult uploadResult = upload.waitForUploadResult();
-                    return upload;
                 } catch (Exception e) {
                     log.error("上传图片到cos异常:", e);
                 }
@@ -112,7 +111,7 @@ public class TransferManagerCreator {
         // 确定本进程不再使用 transferManager 实例之后，关闭之
         // 详细代码参见本页：高级接口 -> 关闭 TransferManager
                 shutdownTransferManager(log, transferManager, cosClient);
-                return null;
+                return upload;
     }
 
     private static COSClient createCOSClient(String secretId, String secretKey) {
