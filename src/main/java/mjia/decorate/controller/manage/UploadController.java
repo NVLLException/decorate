@@ -62,7 +62,7 @@ public class UploadController {
             filePath = groupFilePath;
         }
         BaseResponse baseResponse = saveFile(log, file, filePath, id, URLTypeEnum.getByCode(type));
-        if(true) {
+        if(!baseResponse.getSuccess()) {
             return baseResponse;
         }
         UrlVo urlVo = (UrlVo) baseResponse.getData();
@@ -107,7 +107,7 @@ public class UploadController {
             if (getMaxFileSize() < fileSize) {
                 file.transferTo(new File(filePath, fileName));
                 //压缩至 getMaxFileSize = getMaxFileSize() / fileSize
-                //Thumbnails.of(filePath + fileName).scale(1f).outputQuality(Float.valueOf(getMaxFileSize()) / Float.valueOf(fileSize)).toFile(filePath +fileName);
+                Thumbnails.of(filePath + fileName).scale(1f).outputQuality(Float.valueOf(getMaxFileSize()) / Float.valueOf(fileSize)).toFile(filePath +fileName);
             } else {
                 file.transferTo(new File(filePath, fileName));
             }
@@ -115,7 +115,7 @@ public class UploadController {
             urlVo.setReferId(md5Id);
             urlVo.setType(type.getCode());
 
-            Boolean syncFlag = true;//fileSyncToCloudUtil.syncToCloud(log, bucketName, filePath, fileName);
+            Boolean syncFlag = fileSyncToCloudUtil.syncToCloud(log, bucketName, filePath, fileName);
             if (!syncFlag) {
                 throw new Exception("syncToCloud error");
             }
