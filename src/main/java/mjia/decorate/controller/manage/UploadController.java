@@ -62,7 +62,7 @@ public class UploadController {
             filePath = groupFilePath;
         }
         BaseResponse baseResponse = saveFile(log, file, filePath, id, URLTypeEnum.getByCode(type));
-        if(!baseResponse.getSuccess()) {
+        if(true) {
             return baseResponse;
         }
         UrlVo urlVo = (UrlVo) baseResponse.getData();
@@ -115,7 +115,7 @@ public class UploadController {
             urlVo.setReferId(md5Id);
             urlVo.setType(type.getCode());
 
-            Boolean syncFlag = fileSyncToCloudUtil.syncToCloud(log, bucketName, filePath, fileName);
+            Boolean syncFlag = true;//fileSyncToCloudUtil.syncToCloud(log, bucketName, filePath, fileName);
             if (!syncFlag) {
                 throw new Exception("syncToCloud error");
             }
