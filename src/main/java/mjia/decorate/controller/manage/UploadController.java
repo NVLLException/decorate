@@ -103,14 +103,17 @@ public class UploadController {
             String fileName = getFileName(md5Id, type, file.getOriginalFilename());
 
             long fileSize = file.getSize();
+            //注释压缩图片代码，太消耗内存
             //超过最大图片大小,压缩图片
-            if (getMaxFileSize() < fileSize) {
+/*            if (getMaxFileSize() < fileSize) {
                 file.transferTo(new File(filePath, fileName));
                 //压缩至 getMaxFileSize = getMaxFileSize() / fileSize
+
                 Thumbnails.of(filePath + fileName).scale(1f).outputQuality(Float.valueOf(getMaxFileSize()) / Float.valueOf(fileSize)).toFile(filePath +fileName);
             } else {
                 file.transferTo(new File(filePath, fileName));
-            }
+            }*/
+            file.transferTo(new File(filePath, fileName));
             urlVo.setFileName(fileName);
             urlVo.setReferId(md5Id);
             urlVo.setType(type.getCode());
