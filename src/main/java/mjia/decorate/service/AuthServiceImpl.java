@@ -25,7 +25,7 @@ public class AuthServiceImpl implements AuthService{
 
     @Override
     public Integer createWxUser(WxUserVo wxUserVo) {
-        return 1;
+        return userMapper.insertWxUser(wxUserVo);
     }
 
 

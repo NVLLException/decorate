@@ -26,6 +26,11 @@ public enum BizTypeEnum {
 
     LOGIN_USER("11000", "管理员登录"),
     CUSTOMER_USER("11001", "微信登录"),
+
+    ADD_SHOP_CART("20000", "添加到购物车"),
+    REMOVE_SHOP_CART("200001", "移除购物车"),
+    QUERY_SHOP_CART_LIST("200002", "查询购物车列表"),
+
     ;
 
     private String code;
