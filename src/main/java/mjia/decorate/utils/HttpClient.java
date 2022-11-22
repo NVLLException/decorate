@@ -30,6 +30,7 @@ public class HttpClient {
                 }
             }
             RestTemplate template = new RestTemplate();
+            log.info("url: " + url);
             ResponseEntity<String> responseEntity = template.exchange(url, HttpMethod.GET, null, String.class);
             if(responseEntity != null && responseEntity.getStatusCode() == HttpStatus.OK) {
                 return responseEntity.getBody();
