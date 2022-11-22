@@ -26,7 +26,7 @@ public class HttpClient {
             if (MapUtils.isNotEmpty(param)) {
                 url += "?";
                 for (Map.Entry<String, String> entry : param.entrySet()) {
-                    url = url + entry.getKey() + "=" + entry.getValue();
+                    url = url + entry.getKey() + "=" + entry.getValue() + "&";
                 }
             }
             RestTemplate template = new RestTemplate();
