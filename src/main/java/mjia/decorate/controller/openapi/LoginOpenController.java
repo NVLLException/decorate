@@ -1,5 +1,6 @@
 package mjia.decorate.controller.openapi;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import mjia.decorate.controller.DefaultCallback;
@@ -70,6 +71,7 @@ public class LoginOpenController {
                 param.put("secret", secret);
                 param.put("js_code", code);
                 param.put("grant_type", "authorization_code");
+                log.info("param" + JSONObject.toJSONString(param));
                 String sessionData = httpClient.doGet(loginUrl, param);
                 Gson gson = new Gson();
                 //解析从微信服务器获得的openid和session_key;
