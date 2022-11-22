@@ -18,10 +18,10 @@ create table user(
 insert into user(`name`, `password`) values('admin',md5('admin'));
 create table customer(
     `id` int(11) not null auto_increment,
-    `name` varchar(100) not null,
+    `name` varchar(100),
     `openId` varchar(200) not null,
-    `phone` varchar(100) not null,
-    `wxIconUrl` varchar(100) not null,
+    `phone` varchar(100),
+    `wxIconUrl` varchar(100),
     `ext1` varchar(200),
     `ext2` varchar(200),
     `ext3` varchar(200),

@@ -89,10 +89,10 @@ public class LoginOpenController {
                 if (Objects.isNull(existWxUserVo)) {
                     Integer wxUserId = authService.createWxUser(wxUserVo);
                     response.setSuccess(true);
-                    response.setData(wxUserId);
+                    response.setData(openId);
                 } else {
                     response.setSuccess(true);
-                    response.setData(existWxUserVo.getId());
+                    response.setData(existWxUserVo.getOpenId());
                 }
             }
         });
