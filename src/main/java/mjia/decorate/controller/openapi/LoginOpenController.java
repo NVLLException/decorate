@@ -17,6 +17,7 @@ import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
@@ -30,6 +31,7 @@ import java.util.*;
 import static mjia.decorate.enums.BizTypeEnum.CUSTOMER_USER;
 
 @Slf4j
+@RestController
 @RequestMapping("/openApi/login")
 public class LoginOpenController {
 
