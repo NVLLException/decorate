@@ -15,7 +15,7 @@ public interface UserMapper {
     @Select("select * from customer where openId=#{openId}")
     WxUserVo queryWxUser(WxUserVo wxUserVo);
 
-    @Insert("insert into customer(openId) values(openId)")
+    @Insert("insert into customer(openId) values(#{openId})")
     @Options(useGeneratedKeys=true, keyProperty="id", keyColumn="id")
     Integer insertWxUser(WxUserVo wxUserVo);
 }
