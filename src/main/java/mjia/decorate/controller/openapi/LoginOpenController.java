@@ -17,14 +17,15 @@ import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 
 import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.io.IOException;
+import java.util.*;
 
 import static mjia.decorate.enums.BizTypeEnum.CUSTOMER_USER;
 
@@ -50,7 +51,7 @@ public class LoginOpenController {
             File file = ResourceUtils.getFile("/work/pass/wxpass");
             BufferedReader reader = new BufferedReader(new FileReader(file));
             appId = reader.readLine();
-            secret = reader.readLine();
+            secret = decode(reader.readLine());
         } catch (Exception e) {
             log.error("LoginOpenController init error: ", e);
         }
@@ -91,5 +92,17 @@ public class LoginOpenController {
                 }
             }
         });
+    }
+
+    private String decode(String encode) throws IOException {
+        String s = new String(new BASE64Decoder().decodeBuffer(encode));
+        char[] b = s.toCharArray();
+        StringBuilder sb = new StringBuilder();
+        for(int i=0; i<b.length; i++) {
+            if(i%2 == 0) {
+                sb.append(b[i]);
+            }
+        }
+        return sb.toString();
     }
 }
