@@ -99,7 +99,7 @@ create table material_url(
 )engine = InnoDB, character set ='UTF8';
 create table shopping_cart(
     `id` int(11) not null auto_increment,
-    `wxUserId` int(11) not null,
+    `wxUserId` varchar(100) not null,
     `materialId` int(11) not null,
     `count` int(11) not null,
     `status` tinyint(1) not null default 0,
