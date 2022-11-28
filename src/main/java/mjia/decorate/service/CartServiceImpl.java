@@ -29,6 +29,7 @@ public class CartServiceImpl implements CartService{
         if (Objects.nonNull(tempCartOpenVo)) {
             addCartOpenVo.setCount(tempCartOpenVo.getCount() + addCartOpenVo.getCount());
             cartMapper.updateCart(addCartOpenVo);
+            return;
         }
         if (addCartOpenVo.getCount() > Integer.valueOf(maxCount)) {
             addCartOpenVo.setCount(Integer.valueOf(maxCount));
