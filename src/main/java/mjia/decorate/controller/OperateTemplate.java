@@ -16,7 +16,7 @@ public class OperateTemplate {
             baseResponse.setSuccess(true);
             log.info("execute method: [{}]", bizTypeEnum.getName());
         } catch (Exception e) {
-            log.error("execute method [{}] exception:%s", bizTypeEnum.getName(), e.getMessage());
+            log.error("execute method [{}] exception:[{}]", bizTypeEnum.getName(), e.getMessage());
             e.printStackTrace();
             baseResponse.setSuccess(false);
             baseResponse.setErrorCode(bizTypeEnum.getCode());
