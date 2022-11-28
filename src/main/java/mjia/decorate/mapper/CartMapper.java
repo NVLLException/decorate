@@ -17,7 +17,7 @@ public interface CartMapper {
     Integer addCart(AddCartOpenVo addCartOpenVo);
 
     @Options(useGeneratedKeys=true, keyProperty="id", keyColumn="id")
-    @Insert("update shopping_cart set wxUserId = #{wxUserId}, materialId= #{materialId}, count=#{count} and status=0")
+    @Insert("update shopping_cart set count=#{count} where wxUserId = #{wxUserId} and materialId= #{materialId} and status=0")
     Integer updateCart(AddCartOpenVo addCartOpenVo);
 
     @Select("select * from shopping_cart where wxUserId=#{wxUserId} and materialId=#{materialId} and status=0")
