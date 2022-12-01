@@ -74,8 +74,8 @@ public class CartServiceImpl implements CartService{
         List<AddCartOpenVo> cartOpenVoList = cartMapper.queryCartList(addCartOpenVo);
         if (CollectionUtils.isNotEmpty(cartOpenVoList)) {
             Map<String, Integer> materialIdCount = new HashMap();
-            Map<String, List<String>> categoryIdMap = new HashMap();
-            Map<String, List<String>> groupIdMap = new HashMap();
+            Map<String, Set<String>> categoryIdMap = new HashMap();
+            Map<String, Set<String>> groupIdMap = new HashMap();
             cartOpenVoList.forEach(openVo -> {
                 //material
                 materialIdCount.put(openVo.getMaterialId(), openVo.getCount());
