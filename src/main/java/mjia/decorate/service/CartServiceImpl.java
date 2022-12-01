@@ -1,5 +1,6 @@
 package mjia.decorate.service;
 
+import mjia.decorate.controller.openapi.utils.PictureUtil;
 import mjia.decorate.entity.MaterialCategoryVo;
 import mjia.decorate.entity.MaterialGroupVo;
 import mjia.decorate.entity.MaterialVo;
@@ -7,6 +8,7 @@ import mjia.decorate.entity.openapi.AddCartOpenVo;
 import mjia.decorate.entity.openapi.ShoppingCartOpenVo;
 import mjia.decorate.mapper.CartMapper;
 import mjia.decorate.mapper.MaterialMapper;
+import mjia.decorate.utils.URLUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,9 @@ public class CartServiceImpl implements CartService{
 
     @Autowired
     private MaterialService materialService;
+
+    @Autowired
+    private PictureUtil pictureUtil;
 
     @Override
     public void addCart(AddCartOpenVo addCartOpenVo) {
@@ -131,7 +136,8 @@ public class CartServiceImpl implements CartService{
                         goodsPromotion.setSize(StringUtils.join(size, " x "));
                         goodsPromotion.setDescription(materialVo.getDescription());
                         goodsPromotion.setTitle(materialVo.getName());
-                        goodsPromotion.setThumb(materialVo.getUrlVoList() != null ? materialVo.getUrlVoList().get(0).getFileName() : "");
+
+                        goodsPromotion.setThumb(pictureUtil.getThumbnailUrL(materialVo.getUrlVoList()));
                         promotionGoods.getGoodsPromotionList().add(goodsPromotion);
                     });
                 });
