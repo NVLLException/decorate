@@ -81,12 +81,12 @@ public class CartServiceImpl implements CartService{
                 materialIdCount.put(openVo.getMaterialId(), openVo.getCount());
                 //category
                 if (categoryIdMap.get(openVo.getCategoryId()) == null) {
-                    categoryIdMap.put(openVo.getCategoryId(), new ArrayList<>());
+                    categoryIdMap.put(openVo.getCategoryId(), new HashSet<>());
                 }
                 categoryIdMap.get(openVo.getCategoryId()).add(openVo.getMaterialId());
                 //group
                 if (groupIdMap.get(openVo.getGroupId()) == null) {
-                    groupIdMap.put(openVo.getGroupId(), new ArrayList<>());
+                    groupIdMap.put(openVo.getGroupId(), new HashSet<>());
                 }
                 groupIdMap.get(openVo.getGroupId()).add(openVo.getCategoryId());
             });
