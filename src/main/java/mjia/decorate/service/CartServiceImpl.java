@@ -150,7 +150,7 @@ public class CartServiceImpl implements CartService{
     @Override
     public void removeCart(AddCartOpenVo addCartOpenVo) {
         AddCartOpenVo tempCartOpenVo = queryCart(addCartOpenVo);
-        if (addCartOpenVo.getCount() == null || addCartOpenVo.getCount() >= 0) {
+        if (addCartOpenVo.getCount() == null || addCartOpenVo.getCount() <= 0) {
             return;
         }
         addCartOpenVo.setCount(tempCartOpenVo.getCount() - addCartOpenVo.getCount());
