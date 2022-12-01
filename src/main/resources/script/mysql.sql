@@ -100,10 +100,14 @@ create table material_url(
 create table shopping_cart(
     `id` int(11) not null auto_increment,
     `wxUserId` varchar(100) not null,
+    `groupId` int(11) not null,
+    `categoryId` int(11) not null,
     `materialId` int(11) not null,
     `count` int(11) not null,
     `status` tinyint(1) not null default 0,
      primary key(`id`),
      key(`wxUserId`),
+     key(`groupId`),
+     key(`categoryId`)
      key(`materialId`)
 )engine = InnoDB, character set ='UTF8';

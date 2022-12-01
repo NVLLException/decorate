@@ -2,17 +2,14 @@ package mjia.decorate.mapper;
 
 import mjia.decorate.entity.MaterialVo;
 import mjia.decorate.entity.openapi.AddCartOpenVo;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
 @Mapper
 public interface CartMapper {
 
-    @Insert("insert into shopping_cart(wxUserId,materialId,count) values(#{wxUserId}, #{materialId}, #{count})")
+    @Insert("insert into shopping_cart(wxUserId,groupId,categoryId,materialId,count) values(#{wxUserId}, #{groupId}, #{categoryId}, #{materialId}, #{count})")
     @Options(useGeneratedKeys=true, keyProperty="id", keyColumn="id")
     Integer addCart(AddCartOpenVo addCartOpenVo);
 
@@ -25,4 +22,9 @@ public interface CartMapper {
 
     @Select("select * from shopping_cart where wxUserId=#{wxUserId} and status=0 and count>0")
     List<AddCartOpenVo> queryCartList(AddCartOpenVo addCartOpenVo);
+
+    @Select("select * from material where id in(${ids}) and status=0")
+    List<MaterialVo> queryMaterialByIds(@Param("ids") String ids);
+
+
 }

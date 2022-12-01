@@ -12,6 +12,7 @@ public interface MaterialService {
     List<MaterialVo> listMaterialByCategoryId(String categoryId);
     List<MaterialCategoryVo> listMaterialCategoryByGroupId(String groupId);
     List<MaterialGroupVo> listGroup();
+    MaterialGroupVo queryGroup(String id);
     MaterialVo queryMaterial(String id);
 
     List<MaterialVo> backEndListMaterialByCategoryId(String categoryId);

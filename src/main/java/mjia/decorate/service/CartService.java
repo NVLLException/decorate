@@ -1,6 +1,7 @@
 package mjia.decorate.service;
 
 import mjia.decorate.entity.openapi.AddCartOpenVo;
+import mjia.decorate.entity.openapi.ShoppingCartOpenVo;
 
 import java.util.List;
 
@@ -9,7 +10,7 @@ public interface CartService {
 
     AddCartOpenVo queryCart(AddCartOpenVo addCartOpenVo);
 
-    List<AddCartOpenVo> queryCartList(AddCartOpenVo addCartOpenVo);
+    ShoppingCartOpenVo queryCartList(AddCartOpenVo addCartOpenVo);
 
     void removeCart(AddCartOpenVo addCartOpenVo);
 }

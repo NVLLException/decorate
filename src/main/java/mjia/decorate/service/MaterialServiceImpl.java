@@ -97,6 +97,11 @@ public class MaterialServiceImpl implements MaterialService{
     }
 
     @Override
+    public MaterialGroupVo queryGroup(String id) {
+        return materialMapper.queryGroup(id);
+    }
+
+    @Override
     public MaterialVo queryMaterial(String id) {
         MaterialVo materialVo = materialMapper.queryMaterialById(id);
         List<UrlVo> urlVos = urlMapper.queryListByReferIdAndType(id, URLTypeEnum.MATERIAL.getCode());
