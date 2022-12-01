@@ -115,6 +115,7 @@ public class CartServiceImpl implements CartService{
                     categoryIdMap.get(categoryId).forEach(materialId -> {
                         ShoppingCartOpenVo.GoodsPromotion goodsPromotion = new ShoppingCartOpenVo.GoodsPromotion();
                         MaterialVo materialVo = materialVoMap.get(materialId);
+                        goodsPromotion.setSpuId(materialId);
                         goodsPromotion.setQuantity(materialIdCount.get(materialId));
                         goodsPromotion.setPrice(materialVo.getPrice().toString());
                         List<String> size = new ArrayList();
