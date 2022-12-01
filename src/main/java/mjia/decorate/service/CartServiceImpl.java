@@ -1,5 +1,8 @@
 package mjia.decorate.service;
 
+import com.alibaba.fastjson.JSON;
+import lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.XSlf4j;
 import mjia.decorate.controller.openapi.utils.PictureUtil;
 import mjia.decorate.entity.MaterialCategoryVo;
 import mjia.decorate.entity.MaterialGroupVo;
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.*;
 
+@Slf4j
 @Service
 public class CartServiceImpl implements CartService{
 
@@ -102,6 +106,14 @@ public class CartServiceImpl implements CartService{
             groupIdMap.keySet().forEach(id -> {
                 groupVoMap.put(id, materialService.queryGroup(id));
             });
+
+            log.info("materialIdCount: " + JSON.toJSONString(materialIdCount));
+            log.info("categoryIdMap: " + JSON.toJSONString(categoryIdMap));
+            log.info("groupIdMap: " + JSON.toJSONString(groupIdMap));
+            log.info("materialVoMap: " + JSON.toJSONString(materialVoMap));
+            log.info("categoryVoMap: " + JSON.toJSONString(categoryVoMap));
+            log.info("groupVoMap: " + JSON.toJSONString(groupVoMap));
+
             ShoppingCartOpenVo result = new ShoppingCartOpenVo();
             result.setStoreGoods(new ArrayList());
             for(Map.Entry<String, MaterialGroupVo> group: groupVoMap.entrySet()) {
