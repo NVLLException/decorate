@@ -60,7 +60,7 @@ public interface MaterialMapper {
     @Select("select * from material_group where status=0")
     List<MaterialGroupVo> listGroup();
 
-    @Select("select * from material_group where id=#{id} status=0")
+    @Select("select * from material_group where id=#{id} and status=0")
     MaterialGroupVo queryGroup(@Param("id") String id);
 
     @Select("select id from material_url where referId in(${referIds}) and type=#{type} and status=0")

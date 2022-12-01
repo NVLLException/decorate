@@ -108,6 +108,6 @@ create table shopping_cart(
      primary key(`id`),
      key(`wxUserId`),
      key(`groupId`),
-     key(`categoryId`)
+     key(`categoryId`),
      key(`materialId`)
 )engine = InnoDB, character set ='UTF8';
