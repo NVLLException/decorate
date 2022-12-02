@@ -148,6 +148,7 @@ public class CartServiceImpl implements CartService{
                         goodsPromotion.setSize(StringUtils.join(size, " x "));
                         goodsPromotion.setDescription(materialVo.getDescription());
                         goodsPromotion.setTitle(materialVo.getName());
+                        goodsPromotion.setCategoryName(promotionGoods.getDescription());
 
                         goodsPromotion.setThumb(pictureUtil.getThumbnailUrL(materialVo.getUrlVoList()));
                         promotionGoods.getGoodsPromotionList().add(goodsPromotion);

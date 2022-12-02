@@ -30,6 +30,7 @@ public class ShoppingCartOpenVo {
         private String spuId;
         private Integer quantity;
         private String thumb;
+        private String categoryName;
         private String title;
         private String description;
         private String price;
