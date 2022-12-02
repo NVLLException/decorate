@@ -27,4 +27,7 @@ public interface CartMapper {
     List<MaterialVo> queryMaterialByIds(@Param("ids") String ids);
 
 
+    @Select("select * from shopping_cart where wxUserId=#{wxUserId} and materialId in(${ids}) and status=0 and count>0")
+    List<AddCartOpenVo> queryCartListByUserAndMaterialId(@Param("wxUserId") String wxUserId, @Param("ids") String ids);
+
 }

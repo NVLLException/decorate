@@ -9,7 +9,7 @@ import mjia.decorate.enums.URLTypeEnum;
 import java.util.List;
 
 public interface MaterialService {
-    List<MaterialVo> listMaterialByCategoryId(String categoryId);
+    List<MaterialVo> listMaterialByCategoryId(String wxUserId, String categoryId);
     List<MaterialCategoryVo> listMaterialCategoryByGroupId(String groupId);
     List<MaterialGroupVo> listGroup();
     MaterialGroupVo queryGroup(String id);

@@ -4,7 +4,9 @@ import mjia.decorate.entity.MaterialCategoryVo;
 import mjia.decorate.entity.MaterialGroupVo;
 import mjia.decorate.entity.MaterialVo;
 import mjia.decorate.entity.UrlVo;
+import mjia.decorate.entity.openapi.AddCartOpenVo;
 import mjia.decorate.enums.URLTypeEnum;
+import mjia.decorate.mapper.CartMapper;
 import mjia.decorate.mapper.MaterialMapper;
 import mjia.decorate.mapper.URLMapper;
 import mjia.decorate.utils.URLUtil;
@@ -15,9 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class MaterialServiceImpl implements MaterialService{
@@ -31,8 +31,11 @@ public class MaterialServiceImpl implements MaterialService{
     @Resource
     private URLMapper urlMapper;
 
+    @Resource
+    private CartMapper cartMapper;
+
     @Override
-    public List<MaterialVo> listMaterialByCategoryId(String categoryId) {
+    public List<MaterialVo> listMaterialByCategoryId(String wxUserId, String categoryId) {
         List<MaterialVo> materialVos = materialMapper.queryMaterialList(categoryId);
         if (CollectionUtils.isEmpty(materialVos)) {
             return materialVos;
@@ -42,8 +45,18 @@ public class MaterialServiceImpl implements MaterialService{
         materialVos.forEach(materialVo -> {
             materialIdList.add(materialVo.getId());
         });
+        Map<String, Integer> idCountMap = new HashMap();
+        if (StringUtils.isNotBlank(wxUserId)) {
+            List<AddCartOpenVo> cartOpenVoList = cartMapper.queryCartListByUserAndMaterialId(wxUserId, StringUtils.join(materialIdList, ","));
+            if (CollectionUtils.isNotEmpty(cartOpenVoList)) {
+                cartOpenVoList.forEach(cart -> {
+                    idCountMap.put(cart.getMaterialId(), cart.getCount());
+                });
+            }
+        }
         List<UrlVo> urlVos = urlMapper.queryListByReferIdAndType(StringUtils.join(materialIdList, ","), URLTypeEnum.MATERIAL.getCode());
         materialVos.forEach(materialVo -> {
+            materialVo.setCartCount(idCountMap.get(materialVo.getId()));
             urlVos.forEach(urlVo -> {
                 if (materialVo.getId().equals(urlVo.getReferId())) {
                     String url = urlUtil.getRemote() ? urlVo.getRemoteUrl() : urlVo.getLocalUrl();

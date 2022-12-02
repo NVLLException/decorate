@@ -49,12 +49,12 @@ public class MaterialController {
     }
 
     @RequestMapping("/listMaterialByCategoryId")
-    public BaseResponse queryMaterialVoListByCategoryId(@RequestParam("categoryId") String categoryId) {
+    public BaseResponse queryMaterialVoListByCategoryId(@RequestParam(value = "wxUserId", required = false) String wxUserId, @RequestParam("categoryId") String categoryId) {
         BaseResponse response = BaseResponse.builder().build();
         return OperateTemplate.invoke(log, response, QUERY_MATERIAL, new DefaultCallback() {
             @Override
             public void execute() {
-                response.setData(materialConvert.convertMaterial(materialService.listMaterialByCategoryId(categoryId)));
+                response.setData(materialConvert.convertMaterial(materialService.listMaterialByCategoryId(wxUserId, categoryId)));
             }
         });
     }
