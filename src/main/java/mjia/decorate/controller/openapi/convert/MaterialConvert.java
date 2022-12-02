@@ -48,6 +48,7 @@ public class MaterialConvert {
                 size.add(material.getHigh());
             }
             openVo.setSize(StringUtils.join(size, " x "));
+            openVo.setCount(material.getCartCount() != null ? String.valueOf(material.getCartCount()) : "");
             openVoList.add(openVo);
         });
         return openVoList;
