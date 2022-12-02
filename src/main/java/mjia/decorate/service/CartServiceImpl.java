@@ -107,13 +107,6 @@ public class CartServiceImpl implements CartService{
                 groupVoMap.put(id, materialService.queryGroup(id));
             });
 
-            log.info("materialIdCount: " + JSON.toJSONString(materialIdCount));
-            log.info("categoryIdMap: " + JSON.toJSONString(categoryIdMap));
-            log.info("groupIdMap: " + JSON.toJSONString(groupIdMap));
-            log.info("materialVoMap: " + JSON.toJSONString(materialVoMap));
-            log.info("categoryVoMap: " + JSON.toJSONString(categoryVoMap));
-            log.info("groupVoMap: " + JSON.toJSONString(groupVoMap));
-
             ShoppingCartOpenVo result = new ShoppingCartOpenVo();
             result.setStoreGoods(new ArrayList());
             for(Map.Entry<String, MaterialGroupVo> group: groupVoMap.entrySet()) {
