@@ -2,6 +2,7 @@ package mjia.decorate.controller.openapi;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
+import com.qcloud.cos.utils.Md5Utils;
 import lombok.extern.slf4j.Slf4j;
 import mjia.decorate.controller.DefaultCallback;
 import mjia.decorate.controller.OperateTemplate;
@@ -82,7 +83,7 @@ public class LoginOpenController {
                     response.setErrorMessage(weChatSession.getErrmsg());
                     return;
                 }
-                String openId = weChatSession.getOpenid();
+                String openId = Md5Utils.md5Hex(weChatSession.getOpenid());
                 WxUserVo wxUserVo = new WxUserVo();
                 wxUserVo.setOpenId(openId);
                 WxUserVo existWxUserVo = authService.queryWxUser(wxUserVo);
