@@ -13,7 +13,6 @@ public class OperateTemplate {
             commonCallback.before();
 
             commonCallback.execute();
-            baseResponse.setSuccess(true);
             log.info("execute method: [{}]", bizTypeEnum.getName());
         } catch (Exception e) {
             log.error("execute method [{}] exception:[{}]", bizTypeEnum.getName(), e.getMessage());

@@ -45,7 +45,7 @@ public class CartServiceImpl implements CartService{
         }
         Long cartTotal = this.queryCartCount(addCartOpenVo.getWxUserId());
         if (cartTotal > 30) {
-            return BaseResponse.builder().success(false).errorCode("OVERFLOW_SIZE").errorMessage("收藏栏已满，无法继续收藏!").build();
+            return BaseResponse.builder().success(false).errorCode("OVERFLOW_SIZE").errorMessage("收藏栏已满,无法继续收藏!").build();
         }
         AddCartOpenVo tempCartOpenVo = this.queryCart(addCartOpenVo);
 
