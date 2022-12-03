@@ -44,6 +44,7 @@ public class CartServiceImpl implements CartService{
             return BaseResponse.builder().success(false).errorCode("PARAM_EMPTY").errorMessage("请求参数为空").build();
         }
         AddCartOpenVo tempCartOpenVo = this.queryCart(addCartOpenVo);
+        Long cartTotal = this.queryCartCount(addCartOpenVo.getWxUserId());
 
         //查询category
         MaterialVo materialVo = materialService.queryMaterial(addCartOpenVo.getMaterialId());
@@ -54,6 +55,9 @@ public class CartServiceImpl implements CartService{
         addCartOpenVo.setGroupId(groupId);
         //更新购物车
         if (Objects.nonNull(tempCartOpenVo)) {
+            if (cartTotal > 30 && tempCartOpenVo.getCount()==0) {
+                return BaseResponse.builder().success(false).errorCode("OVERFLOW_SIZE").errorMessage("收藏栏已满!").build();
+            }
             int tempCount = tempCartOpenVo.getCount() + addCartOpenVo.getCount();
             tempCount = tempCount > Integer.valueOf(maxCount) ? Integer.valueOf(maxCount) : tempCount;
             addCartOpenVo.setCount(tempCount);
@@ -63,7 +67,6 @@ public class CartServiceImpl implements CartService{
         if (addCartOpenVo.getCount() > Integer.valueOf(maxCount)) {
             addCartOpenVo.setCount(Integer.valueOf(maxCount));
         }
-        Long cartTotal = this.queryCartCount(addCartOpenVo.getWxUserId());
         if (cartTotal > 30) {
             return BaseResponse.builder().success(false).errorCode("OVERFLOW_SIZE").errorMessage("收藏栏已满!").build();
         }
