@@ -36,8 +36,10 @@ public class ShoppingCartController {
             }
             @Override
             public void execute() {
-                cartService.addCart(addCartOpenVo);
-                response.setSuccess(true);
+                BaseResponse result = cartService.addCart(addCartOpenVo);
+                response.setSuccess(result.getSuccess());
+                response.setErrorCode(result.getErrorCode());
+                response.setErrorMessage(result.getErrorMessage());
             }
         });
     }

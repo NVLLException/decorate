@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import lombok.extern.slf4j.XSlf4j;
 import mjia.decorate.controller.openapi.utils.PictureUtil;
+import mjia.decorate.entity.BaseResponse;
 import mjia.decorate.entity.MaterialCategoryVo;
 import mjia.decorate.entity.MaterialGroupVo;
 import mjia.decorate.entity.MaterialVo;
@@ -38,11 +39,16 @@ public class CartServiceImpl implements CartService{
     private PictureUtil pictureUtil;
 
     @Override
-    public void addCart(AddCartOpenVo addCartOpenVo) {
-        AddCartOpenVo tempCartOpenVo = queryCart(addCartOpenVo);
-        if (addCartOpenVo.getCount() == null || addCartOpenVo.getCount() <= 0) {
-            return;
+    public BaseResponse addCart(AddCartOpenVo addCartOpenVo) {
+        if (addCartOpenVo.getCount() == null || addCartOpenVo.getCount() <= 0 || StringUtils.isBlank(addCartOpenVo.getWxUserId())) {
+            return BaseResponse.builder().success(false).errorCode("PARAM_EMPTY").errorMessage("请求参数为空").build();
         }
+        Long cartTotal = this.queryCartCount(addCartOpenVo.getWxUserId());
+        if (cartTotal > 30) {
+            return BaseResponse.builder().success(false).errorCode("OVERFLOW_SIZE").errorMessage("收藏栏已满，无法继续收藏!").build();
+        }
+        AddCartOpenVo tempCartOpenVo = this.queryCart(addCartOpenVo);
+
         //查询category
         MaterialVo materialVo = materialService.queryMaterial(addCartOpenVo.getMaterialId());
         String categoryId = materialVo.getCategoryId();
@@ -52,15 +58,18 @@ public class CartServiceImpl implements CartService{
         addCartOpenVo.setGroupId(groupId);
         //更新购物车
         if (Objects.nonNull(tempCartOpenVo)) {
-            addCartOpenVo.setCount(tempCartOpenVo.getCount() + addCartOpenVo.getCount());
+            int tempCount = tempCartOpenVo.getCount() + addCartOpenVo.getCount();
+            tempCount = tempCount > Integer.valueOf(maxCount) ? Integer.valueOf(maxCount) : tempCount;
+            addCartOpenVo.setCount(tempCount);
             cartMapper.updateCart(addCartOpenVo);
-            return;
+            return BaseResponse.builder().success(true).build();
         }
         if (addCartOpenVo.getCount() > Integer.valueOf(maxCount)) {
             addCartOpenVo.setCount(Integer.valueOf(maxCount));
         }
         //添加购物车
         cartMapper.addCart(addCartOpenVo);
+        return BaseResponse.builder().success(true).build();
     }
 
     @Override
@@ -156,7 +165,7 @@ public class CartServiceImpl implements CartService{
     @Override
     public void removeCart(AddCartOpenVo addCartOpenVo) {
         AddCartOpenVo tempCartOpenVo = queryCart(addCartOpenVo);
-        if (addCartOpenVo.getCount() == null || addCartOpenVo.getCount() <= 0) {
+        if (addCartOpenVo.getCount() == null || addCartOpenVo.getCount() <= 0 || StringUtils.isBlank(addCartOpenVo.getWxUserId())) {
             return;
         }
         addCartOpenVo.setCount(tempCartOpenVo.getCount() - addCartOpenVo.getCount());
@@ -164,6 +173,10 @@ public class CartServiceImpl implements CartService{
             addCartOpenVo.setCount(0);
         }
         cartMapper.updateCart(addCartOpenVo);
+    }
+
+    private Long queryCartCount(String wxUserId) {
+        return cartMapper.queryCartTotal(wxUserId);
     }
 
 }

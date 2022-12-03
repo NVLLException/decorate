@@ -1,12 +1,13 @@
 package mjia.decorate.service;
 
+import mjia.decorate.entity.BaseResponse;
 import mjia.decorate.entity.openapi.AddCartOpenVo;
 import mjia.decorate.entity.openapi.ShoppingCartOpenVo;
 
 import java.util.List;
 
 public interface CartService {
-    void addCart(AddCartOpenVo addCartOpenVo);
+    BaseResponse addCart(AddCartOpenVo addCartOpenVo);
 
     AddCartOpenVo queryCart(AddCartOpenVo addCartOpenVo);
 

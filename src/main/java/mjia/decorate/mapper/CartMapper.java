@@ -30,4 +30,6 @@ public interface CartMapper {
     @Select("select * from shopping_cart where wxUserId=#{wxUserId} and materialId in(${ids}) and status=0 and count>0")
     List<AddCartOpenVo> queryCartListByUserAndMaterialId(@Param("wxUserId") String wxUserId, @Param("ids") String ids);
 
+    @Select("select count(id) as total from shopping_cart where wxUserId=#{wxUserId} and status=0 and count>0")
+    Long queryCartTotal(@Param("wxUserId") String wxUserId);
 }
