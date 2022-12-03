@@ -43,10 +43,6 @@ public class CartServiceImpl implements CartService{
         if (addCartOpenVo.getCount() == null || addCartOpenVo.getCount() <= 0 || StringUtils.isBlank(addCartOpenVo.getWxUserId())) {
             return BaseResponse.builder().success(false).errorCode("PARAM_EMPTY").errorMessage("请求参数为空").build();
         }
-        Long cartTotal = this.queryCartCount(addCartOpenVo.getWxUserId());
-        if (cartTotal > 30) {
-            return BaseResponse.builder().success(false).errorCode("OVERFLOW_SIZE").errorMessage("收藏栏已满,无法继续收藏!").build();
-        }
         AddCartOpenVo tempCartOpenVo = this.queryCart(addCartOpenVo);
 
         //查询category
@@ -66,6 +62,10 @@ public class CartServiceImpl implements CartService{
         }
         if (addCartOpenVo.getCount() > Integer.valueOf(maxCount)) {
             addCartOpenVo.setCount(Integer.valueOf(maxCount));
+        }
+        Long cartTotal = this.queryCartCount(addCartOpenVo.getWxUserId());
+        if (cartTotal > 30) {
+            return BaseResponse.builder().success(false).errorCode("OVERFLOW_SIZE").errorMessage("收藏栏已满!").build();
         }
         //添加购物车
         cartMapper.addCart(addCartOpenVo);
